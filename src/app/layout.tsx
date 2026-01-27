@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter, Geist_Mono } from 'next/font/google';
 import { Header, Footer } from '@/components/layout';
+import { AuthProvider } from '@/context/auth-context';
+import { CartProvider } from '@/context/cart-context';
+import { EmailPopup } from '@/components/email-popup';
+import { OrderDeadlineBanner } from '@/components/order-deadline-banner';
 import { siteConfig } from '@/data/site';
 import './globals.css';
 
@@ -58,9 +62,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.variable} ${geistMono.variable} font-sans`}>
-        <Header />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <CartProvider>
+            <Header />
+            <main className="min-h-screen">{children}</main>
+            <Footer />
+            <OrderDeadlineBanner />
+            <EmailPopup />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );
