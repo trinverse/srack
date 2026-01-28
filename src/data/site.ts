@@ -21,6 +21,7 @@ export const navigation: NavItem[] = [
     ],
   },
   { label: 'How It Works', href: '/how-it-works' },
+  { label: 'About Us', href: '/about' },
   { label: 'Catering', href: '/catering' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Contact', href: '/contact' },

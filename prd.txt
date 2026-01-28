@@ -1,0 +1,222 @@
+HERE IS THE WEBSITE REQUIREMENTS on the back end of our new site please make sure to read and UNDERSTAND each point. 
+
+Website Requirements (front end)
+Attractive, simple landing page just like we have on our shopify site 
+The brand color scheme is going to be the logo colors.
+Fast loading on all devices (mobile, desktop, iOS, Android).
+Include a section where it says lets check if we deliver to your home (just like our competitor dabba wala’s site) 
+Tabs should be tiffin menu, how it works, faqs about us contact and party catering.
+Rest of the content is the exact same that is on shopify site. (make sure that all the details are accurate like faq, how it works, policies ect.)
+Animated video explanations highlighting brand history, how it works, (** future)
+
+Website Requirements (back end)
+Menu Management
+Master menu on the back end loaded with pictures, descriptions, and marked with dietary tags like veg, nonveg, vegan, gluten free, hot, mild, medium 
+Ability to update menu items for specific days (e.g., Monday/Thursday) and pre-fill them without going live. Have it ready for the upcoming day. 
+Option to turn the entire menu on/off instantly as needed. (toggle button for on/off for easy operation by staff) (normally we take monday orders till noon-sunday and thursday orders till noon-wednesday) 
+Ability to turn specific items on/off (e.g., disable paneer items if out of stock) while keeping other items available.
+Support for variable pricing (e.g., 8oz and 16oz options) with quick updates to prices, pictures, and descriptions. (veg curries, nonveg curries, daal) single prices on ( rice, rotis & special items)
+Ability to create new items or delete unwanted ones easily on the master menu.
+Menu item divided in 5 categories Veg Entrees, Non-Veg Entrees, Dal Entrees, Roties & Rice, and Special Items. 
+Ability for special menu (students) only be able to access for students living in certain campus/area/zipcode. (** future)
+
+Customer Order Management
+Mandatory fields for essential details: Billing address, shipping address 
+street address, apartment number, city, state, zipcode with extra field for building/apartment name, gate codes, phone number, and parking instructions.
+Note section for customers to add crucial details (e.g., building name, parking instructions, concierge availability).
+"Ordering for someone else" flag with required delivery details (e.g., recipient’s proper address details, availability, recipient's phone, correct zip codes, building , parking and delivery meeting point info).
+We can put a line where customers can check whether we deliver in their area by putting in their address somewhere on the site. 
+Zip code validation to ensure shipping address matches the delivery area. And if it's out of the delivery zone then directly guide them to pick up options. 
+"I agree" checkbox for pickup customers to confirm responsibility for being available to receive delivery during the delivery window and responsibility on arriving on time at the correct pick up locations.
+Ability to send out auto (text) notifications a few hours before delivery so they are reminded of expected food delivery. and for those who are our pickup customers get notification (text) with time and place of pickup, drivers phone number, car description and exact location ( we will need ability to update this information based on driver availability) 
+Subscription management: clear process for starting/stopping subscriptions and handling recurring orders. (** future)
+Ability to edit order, add or subtract items from an order based on customer requests. And charging them for it. 
+Ability to take/place manual orders on the phone for customers. (for elderly)
+Option to flag frequent customers VIPs for priority handling. 
+CRM system (** Future) 
+Customer profile management for storing preferences and order history.
+
+Delivery and Pickup
+Automatic generation of a CSV file for delivery orders only (street/address, apartment/floor, zipcodes, name, phone, notes) (will provide example of recent with exact format)
+Separation of pickup orders by location for easy sorting and reporting.
+
+
+Customer agreement to acknowledge provided information is correct,and responsibility for receiving and being available for delivery.
+Ability to add/delete pickup locations dynamically. 
+Ability to turn the pick up location on/off manually depending on driver availability.
+Integration pickup details (e.g., time, location address other details) into order confirmation emails/ and reminder texts or notifications.
+
+Order Confirmation and Communication
+Immediate email confirmation to customers upon order placement, including pickup/delivery details.
+Also sending out email if the order is declined, canceled or changed. 
+Order status management: "in-progress," "hold," or “ready for delivery/pickup” "completed" “order canceled" options for each order.(just for internal purposes no need to send out notifications for that)
+Handling pending/canceled/failed orders:
+Notify customers to complete payment if pending. (abandoned cart ) 
+Alert customers if payment is declined and prompt reattempt.
+Abandon cart email. 
+Text/email reminders for pickup/delivery times and locations.
+Notifications for issues like missing items, wrong orders, with a policy for immediate reporting.
+Automated follow-up email/text post-delivery/pickup for feedback or satisfaction survey.
+
+Product Quantity Reporting (most important report for kitchen)
+Ability to pull a printer-friendly variable product report summarizing total items ordered (e.g., how many curries to prepare, how many 8oz curries and 16oz curries.) for particular day or dates (example will be provided)
+Ability to separate delivery and pickup orders and bulk print order receipts for kitchen (they use this to fulfill orders when they are putting them together.  (example provided)
+Integration with DYMO LabelWriter 4XL for printing stickers for food containers. And name of customer that goes on the bag. 
+Detailed reports on units sold (e.g., 8oz Butter Chicken, 16oz Butter Chicken, Combos) for inventory planning.
+Weekly/monthly sales reports to track trends and popular items.
+Exportable reports in PDF/Excel for sharing with team or suppliers.
+
+Customization and Control
+Admin ability to edit customer profile info (e.g., ability to update address, correct zip codes, edit/ add notes) and update orders manually.
+Control over order acceptance: ability to start/stop taking orders. Toggle on/off manually. 
+Minimum order value has to be $30.00 (before taxes and delivery fees).
+Discount code functionality (ability to create discount codes for certain products, promotions, special events, e.g. free samosa on order greater than x amount) 
+Point system: earn 1 point for every dollar spent and redeem points 20 points gives $1.00 discount) (ability to change/ adjust this amount and points)
+Ability to manage multiple pickup locations and toggle on/off based on driver availability.
+Role-based access for staff (e.g., admin vs. kitchen vs. marketing team).
+Audit log to track changes made to orders or menus for accountability.
+
+Automation and Efficiency
+Delete items in the cart if abandoned/unpaid after 24 hours so customers do not have lingering items in the cart (our menu changes every time)
+Email notification goes out 
+Automate receipt printing and sorting by delivery/pickup and sorted by each pickup-location.
+Automate CSV file generation for delivery orders and integration with delivery company workflows / delivery company API 
+Automate text messages for pickup confirmations (e.g., time, location, driver info).
+Automated abandoned cart reminders via email/text to encourage order completion.
+Batch processing for printing stickers/labels to save time.
+
+Technical Requirements
+Payment gateway: Authorize.net integration. (patel processing)
+High-speed performance across platforms to avoid slow loading complaints.
+Printer-friendly outputs (receipts, reports) compatible with existing hardware.
+CRM system to track customer preferences, purchase history, and notes. (future)
+
+Additional Features and Goals
+Pop up to collect emails 
+Welcome series / flow emails + brand story, 
+1st time post purchase flow how it works, schedule info ect. 
+Abandon cart flow 
+Holidays and season flow
+“We missed you” flow for customers who haven't ordered in a while. 
+
+Step-by-Step Customer Onboarding Guide (Website)
+Step 1: Welcome Screen
+Purpose: Introduce the customer to The Spice Rack Atlanta and set expectations.
+Action: Display a brief welcome message (e.g., "Welcome to spice rack! Fresh tiffin delivered to your door or ready for pickup. Let’s get started!").
+Features:
+Option to "Sign Up" or "Log In" (for returning users).
+Small banner showcasing a special (e.g., "First order 10% discount with code WELCOME").
+Button to watch a 30-second intro video (optional, based on your preference).
+
+Step 2: Account Creation
+Purpose: Collect essential customer information securely.
+Action: Prompt the customer to create an account.
+Fields:
+Full Name
+Email Address (for order confirmations)
+Phone Number (validated to ensure it’s not a Google Voice/office number; used for text reminders)
+Password (with basic security requirements).
+Features:
+"Sign up with Google/Facebook" option for faster onboarding.
+Checkbox: "I agree to receive text/email updates" (pre-checked but optional).
+Link to Terms of Service and Privacy Policy for transparency.
+
+Step 3: Address and Delivery Details
+Purpose: Gather accurate delivery/pickup info to avoid order issues.
+Action: Prompt for address details with clear labeling.
+Fields:
+Billing Address: Street address, city, state, ZIP code (mandatory for payment).
+Shipping Address: Option to mark "Same as billing" or enter a separate address (street, apartment number, ZIP code).
+Gate Code (if applicable).
+Note Section: Free-text field for instructions (e.g., building name, "Leave with concierge," "Park in visitor lot").
+Features:
+ZIP code validation to confirm delivery area eligibility.
+Dropdown for pickup location (if choosing pickup instead of delivery) with 6 options (toggleable by you in the back end).
+Auto-suggest address feature using Google Maps API to reduce errors.
+
+Step 4: Order Preference Setup
+Purpose: Let customers choose how they want to order (one-time or subscription (future).
+Action: Present two options with clear benefits.
+Options:
+One-Time Order: "Order whenever you want, starting at $30."
+Subscription: "Save time with weekly tiffin, no hassle of remembering."
+Subscription Details (if selected): (** FUTURE) 
+Choose frequency: Weekly (Monday, Thursday, or both).
+Select meals: Pre-set combo or custom items (e.g., 8oz Butter Chicken + Rice).
+Confirm first delivery/pickup date (e.g., next Monday).
+Features:
+Highlight subscription perks (e.g., "Pause anytime, free dessert after 4 weeks").
+Preview of current menu to entice immediate ordering.
+
+Step 5: Payment Setup
+Purpose: Secure payment method for orders and subscriptions.
+Action: Prompt to add a payment method via Authorize.net integration.
+Fields:
+Card Number, Expiration Date, CVV, Name on Card.
+Option to save card for future use (default checked).
+Features:
+Display $30 minimum order requirement (before taxes/delivery).
+Option to enter a discount code (e.g., "WELCOME" for a free samosa).
+Assurance message: "We won’t charge until your order is confirmed."
+
+Step 6: Confirmation and Agreement
+Purpose: Ensure customers understand their responsibilities and policies.
+Action: Display a summary and require agreement.
+Summary:
+Order type (one-time/subscription), delivery/pickup details, payment method.
+Agreements:
+Checkbox: "I agree to pick up on time at the selected location" (for pickup orders).
+Checkbox: "I understand delivery requires me to be available or provide access" (for delivery orders).
+Link to "How It Works" page for more details.
+Features:
+Button: "Confirm and Start Ordering."
+
+Step 7: First Order Placement
+Purpose: Guide customers to place their first order immediately.
+Action: Redirect to the menu page post-confirmation.
+Features:
+Display active menu (e.g., Monday’s menu if within order window).
+Highlight upsell suggestions (e.g., "Add a samosa for $2").
+Clear cart with $30 minimum reminder and option to apply discount codes.
+Pop-up tip: "Order 48 hours in advance for best availability!"
+
+Step 8: Welcome Confirmation
+Purpose: Reassure customers and build trust.
+Action: Send an immediate email/text after onboarding.
+Content:
+"Thanks for joining The Spice Rack Atlanta! Your account is ready."
+Summary of account details (email, phone, address, pickup/delivery preference).
+First order details (if placed) with date, time, and location/driver info.
+Link to app download (if onboarding via website) or "Manage Subscription" button.
+Features:
+Include a quick survey: "How easy was sign-up? 1-5 stars" for feedback.
+
+Additional Onboarding Enhancements
+Progress Bar: Show a visual tracker (e.g., "Step 1 of 8") to keep customers motivated.
+Tool Tips: Add hover-over explanations (e.g., "Why we need your gate code") for clarity.
+Skip Option: Allow skipping subscription setup with a "Remind me later" button for hesitant users.
+In-site Guide: Post-onboarding, offer a 3-slide tutorial (e.g., "How to order," "Manage subscriptions," "Contact us").
+Live Chat Support: Include a "Need help?" button during onboarding for real-time assistance.
+
+How This Fits Your Requirements
+Mandatory Fields: Ensures address, phone, and notes are collected (Step 3).
+Subscriptions: Introduces subscription options early with flexibility (Step 4). (**FUTURE)
+Pickup/Delivery: Integrates location selection and agreements (Steps 3 & 6).
+Communication: Sets up text/email notifications from the start (Steps 2 & 8).
+Ease of Use: Keeps steps simple and fast, addressing your goal of automating mundane tasks.
+
+Sample Flow for a New Customer
+Sees "Welcome to The Spice Rack Atlanta!" and clicks "Sign Up."
+Enters name (Priya Patel), email (priya@email.com), phone (404-555-1234), and password.
+Adds address (123 Main St, Apt 4B, Atlanta, GA 30303, Gate Code: 5678) and notes ("Leave with concierge").
+Chooses "Subscription" for Mondays, selects Butter Chicken + Rice, sets next Monday as start date.
+Adds card (Visa ending 1234) and enters code "WELCOME" for a free samosa or something.
+Reviews summary, checks "I agree," and confirms.
+Places first order from the menu, hits $30 minimum, and submits.
+Receives email: "Welcome, Priya! Your Monday order is set for March 31, 5 PM delivery."
+and customer notes.
+
+Current shopify site : https://the-spice-rack-atlanta-2.myshopify.com/    pass: poomay
+
+
+
