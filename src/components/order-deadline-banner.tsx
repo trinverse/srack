@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { Clock, X } from 'lucide-react';
 
 function getNextDeadline() {
@@ -86,6 +87,10 @@ export function OrderDeadlineBanner() {
   const [isVisible, setIsVisible] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState('');
   const [deliveryDay, setDeliveryDay] = useState('');
+  const pathname = usePathname();
+
+  // Hide on admin routes
+  const isAdminRoute = pathname.startsWith('/admin');
 
   useEffect(() => {
     const updateTime = () => {
@@ -127,7 +132,7 @@ export function OrderDeadlineBanner() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (isDismissed) return null;
+  if (isDismissed || isAdminRoute) return null;
 
   return (
     <div
