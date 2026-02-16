@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
 import type { User, Session } from '@supabase/supabase-js';
@@ -28,20 +28,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const lastFetchedUserId = useRef<string | null>(null);
+
   const supabase = createClient();
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchCustomer(session.user.id);
-      } else {
-        setIsLoading(false);
-      }
-    });
-
     // Listen for auth changes
     const {
       data: { subscription },
@@ -50,8 +41,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        await fetchCustomer(session.user.id);
+        // Only fetch if we haven't fetched for this user yet
+        if (lastFetchedUserId.current !== session.user.id) {
+          lastFetchedUserId.current = session.user.id;
+          await fetchCustomer(session.user.id);
+        }
       } else {
+        lastFetchedUserId.current = null;
         setCustomer(null);
         setIsLoading(false);
       }

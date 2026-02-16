@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -16,8 +16,17 @@ const log = logger.withSource('Login');
 function LoginForm() {
   const searchParams = useSearchParams();
   const defaultRedirect = searchParams.get('redirect') || '/';
-  const { signIn } = useAuth();
+  const { signIn, user, isLoading: authLoading } = useAuth();
   const supabase = createClient();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!authLoading && user) {
+      const redirect = defaultRedirect === '/' ? '/admin' : defaultRedirect;
+      // Note: simplistic redirection logic, refinement might be needed based on role
+      window.location.href = redirect;
+    }
+  }, [user, authLoading, defaultRedirect]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
