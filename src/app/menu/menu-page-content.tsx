@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, Flame, Leaf, AlertCircle, ShoppingCart, Plus, Minus, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, Flame, Leaf, AlertCircle, ShoppingCart, Plus, Minus, Search, ChevronLeft, ChevronRight, CheckCircle2, MessageSquarePlus, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCart } from '@/context/cart-context';
 import { cn } from '@/lib/utils';
-import type { MenuItem as BaseMenuItem, PickupLocation, MenuCategory } from '@/types/database';
+import { createClient } from '@/lib/supabase/client';
+import type { MenuItem as BaseMenuItem, PickupLocation, MenuCategory, WeeklyMenu } from '@/types/database';
+import { getNextWeekday, getISOString, formatDate } from '@/lib/date-utils';
 
 interface MenuItem extends BaseMenuItem {
   gallery_images?: string[] | null;
@@ -22,6 +24,7 @@ interface MenuPageContentProps {
   mondayActive: boolean;
   thursdayActive: boolean;
   pickupLocations: PickupLocation[];
+  weeklyMenus: WeeklyMenu[];
 }
 
 const categoryLabels: Record<MenuCategory, string> = {
@@ -53,11 +56,22 @@ const dietaryTagLabels: Record<string, { label: string; color: string }> = {
   gluten_free: { label: 'GF', color: 'bg-amber-100 text-amber-700' },
 };
 
-function MenuItemCard({ item }: { item: MenuItem }) {
+function MenuItemCard({
+  item,
+  isInWeeklyMenu = true,
+  onRequested
+}: {
+  item: MenuItem;
+  isInWeeklyMenu?: boolean;
+  onRequested?: () => void;
+}) {
   const { addItem } = useCart();
+  const supabase = createClient();
   const [selectedSize, setSelectedSize] = useState<'8oz' | '16oz'>('8oz');
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [hasRequested, setHasRequested] = useState(false);
 
   const price = item.has_size_options
     ? selectedSize === '8oz'
@@ -72,6 +86,33 @@ function MenuItemCard({ item }: { item: MenuItem }) {
   const handleAddToCart = () => {
     addItem(item, item.has_size_options ? selectedSize : null, quantity);
     setQuantity(1);
+  };
+
+  const handleRequest = async () => {
+    setIsRequesting(true);
+    try {
+      // Get current customer if logged in (optional but good)
+      const { data: { user } } = await supabase.auth.getUser();
+
+      const { error } = await supabase
+        .from('menu_requests' as any)
+        .insert({
+          menu_item_id: item.id,
+          item_name: item.name,
+          customer_id: user?.id,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      setHasRequested(true);
+      if (onRequested) onRequested();
+    } catch (err) {
+      console.error('Error requesting item:', err);
+      alert('Failed to request item. Please try again later.');
+    } finally {
+      setIsRequesting(false);
+    }
   };
 
   const nextImage = (e: React.MouseEvent) => {
@@ -230,25 +271,56 @@ function MenuItemCard({ item }: { item: MenuItem }) {
 
         {/* Quantity and Add to Cart */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center border rounded-lg">
-            <button
-              onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="p-2 hover:bg-muted transition-colors"
+          {isInWeeklyMenu ? (
+            <>
+              <div className="flex items-center border rounded-lg">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="p-2 hover:bg-muted transition-colors"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <span className="px-4 py-2 font-medium">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="p-2 hover:bg-muted transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+              <Button onClick={handleAddToCart} className="flex-1">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Add ${((price || 0) * quantity).toFixed(2)}
+              </Button>
+            </>
+          ) : (
+            <Button
+              onClick={handleRequest}
+              disabled={isRequesting || hasRequested}
+              className={cn(
+                "flex-1 transition-all",
+                hasRequested ? "bg-emerald/10 text-emerald border-emerald hover:bg-emerald/20" : "bg-muted text-muted-foreground hover:bg-muted/80"
+              )}
+              variant={hasRequested ? "outline" : "secondary"}
             >
-              <Minus className="h-4 w-4" />
-            </button>
-            <span className="px-4 py-2 font-medium">{quantity}</span>
-            <button
-              onClick={() => setQuantity(quantity + 1)}
-              className="p-2 hover:bg-muted transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-            </button>
-          </div>
-          <Button onClick={handleAddToCart} className="flex-1">
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            Add ${((price || 0) * quantity).toFixed(2)}
-          </Button>
+              {isRequesting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Requesting...
+                </>
+              ) : hasRequested ? (
+                <>
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  Requested
+                </>
+              ) : (
+                <>
+                  <MessageSquarePlus className="h-4 w-4 mr-2" />
+                  Request this Item
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -261,23 +333,54 @@ export function MenuPageContent({
   mondayActive,
   thursdayActive,
   pickupLocations,
+  weeklyMenus,
 }: MenuPageContentProps) {
   const { state } = useCart();
   const [activeCategory, setActiveCategory] = useState<MenuCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFullMenu, setShowFullMenu] = useState(false);
 
-  // Group items by category
-  const itemsByCategory = categoryOrder.reduce((acc, category) => {
-    acc[category] = menuItems.filter(item => item.category === category);
-    return acc;
-  }, {} as Record<MenuCategory, MenuItem[]>);
+  // Date Logic
+  const nextMonday = getNextWeekday('Monday');
+  const nextThursday = getNextWeekday('Thursday');
+  const nextMondayISO = getISOString(nextMonday);
+  const nextThursdayISO = getISOString(nextThursday);
+
+  // Determine which day's menu to show by default
+  // Priority: if monday is active, show monday. Else if thursday is active, show thursday.
+  const activeDay = mondayActive ? 'monday' : (thursdayActive ? 'thursday' : null);
+  const activeDateISO = activeDay === 'monday' ? nextMondayISO : nextThursdayISO;
+  const activeDateFormatted = activeDay === 'monday' ? formatDate(nextMonday) : formatDate(nextThursday);
+
+  // Get items for the active day
+  const weeklyMenuItemIds = new Set(
+    weeklyMenus
+      .filter(wm => wm.order_day === activeDay && wm.menu_date === activeDateISO)
+      .map(wm => wm.menu_item_id)
+  );
 
   const filteredItems = menuItems.filter(item => {
     const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+
+    // If not showing full menu, only show items in the weekly menu for the active day
+    const isInWeekly = weeklyMenuItemIds.has(item.id);
+    const matchesVisibility = showFullMenu || isInWeekly;
+
+    return matchesCategory && matchesSearch && (showFullMenu || matchesVisibility);
   });
+
+  // Items to actually display (if full menu is off, we only show items in weekly menu)
+  // If full menu is on, we show all, but some will have the "Request" button
+  const displayItems = filteredItems;
+
+  const isItemInWeekly = (itemId: string) => weeklyMenuItemIds.has(itemId);
+
+  // Group items by category for the "all" view
+  const categoriesToRender = categoryOrder.filter(cat =>
+    displayItems.some(item => item.category === cat)
+  );
 
   if (!menuActive) {
     return (
@@ -322,42 +425,66 @@ export function MenuPageContent({
       {/* Order Day Info */}
       <section className="py-8 border-b">
         <div className="container-wide">
-          <div className="flex flex-wrap gap-4 justify-center">
-            <div className={cn(
-              'flex items-center gap-3 px-6 py-3 rounded-lg border',
-              mondayActive ? 'border-emerald bg-emerald/5' : 'border-muted bg-muted/50 opacity-60'
-            )}>
-              <Calendar className="h-5 w-5 text-emerald" />
-              <div>
-                <div className="font-semibold">Monday Delivery</div>
-                <div className="text-sm text-muted-foreground flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  Order by Sunday 12:00 PM
+          <div className="flex flex-col items-center gap-6">
+            <div className="flex flex-wrap gap-4 justify-center">
+              <div className={cn(
+                'flex items-center gap-3 px-6 py-3 rounded-lg border transition-all',
+                mondayActive ? 'border-emerald bg-emerald/5 ring-1 ring-emerald/20' : 'border-muted bg-muted/50 opacity-60'
+              )}>
+                <Calendar className="h-5 w-5 text-emerald" />
+                <div>
+                  <div className="font-semibold">Monday Delivery</div>
+                  <div className="text-sm text-muted-foreground flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {mondayActive ? `Accepting for ${formatDate(nextMonday)}` : 'Closed'}
+                  </div>
                 </div>
+                {mondayActive && (
+                  <span className="text-xs px-2 py-1 bg-emerald text-white rounded-full animate-pulse capitalize">
+                    Active
+                  </span>
+                )}
               </div>
-              {mondayActive && (
-                <span className="text-xs px-2 py-1 bg-emerald text-white rounded-full">
-                  Open
-                </span>
-              )}
+              <div className={cn(
+                'flex items-center gap-3 px-6 py-3 rounded-lg border transition-all',
+                thursdayActive ? 'border-gold bg-gold/5 ring-1 ring-gold/20' : 'border-muted bg-muted/50 opacity-60'
+              )}>
+                <Calendar className="h-5 w-5 text-gold" />
+                <div>
+                  <div className="font-semibold">Thursday Delivery</div>
+                  <div className="text-sm text-muted-foreground flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {thursdayActive ? `Accepting for ${formatDate(nextThursday)}` : 'Closed'}
+                  </div>
+                </div>
+                {thursdayActive && (
+                  <span className="text-xs px-2 py-1 bg-gold text-white rounded-full animate-pulse capitalize">
+                    Active
+                  </span>
+                )}
+              </div>
             </div>
-            <div className={cn(
-              'flex items-center gap-3 px-6 py-3 rounded-lg border',
-              thursdayActive ? 'border-gold bg-gold/5' : 'border-muted bg-muted/50 opacity-60'
-            )}>
-              <Calendar className="h-5 w-5 text-gold" />
-              <div>
-                <div className="font-semibold">Thursday Delivery</div>
-                <div className="text-sm text-muted-foreground flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  Order by Wednesday 12:00 PM
-                </div>
-              </div>
-              {thursdayActive && (
-                <span className="text-xs px-2 py-1 bg-gold text-white rounded-full">
-                  Open
-                </span>
-              )}
+
+            {/* Full Menu Toggle */}
+            <div className="flex items-center gap-3 p-1 bg-muted/50 rounded-full border">
+              <button
+                onClick={() => setShowFullMenu(false)}
+                className={cn(
+                  "px-6 py-2 rounded-full text-sm font-medium transition-all",
+                  !showFullMenu ? "bg-white shadow-sm text-emerald" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Current Menu
+              </button>
+              <button
+                onClick={() => setShowFullMenu(true)}
+                className={cn(
+                  "px-6 py-2 rounded-full text-sm font-medium transition-all",
+                  showFullMenu ? "bg-white shadow-sm text-emerald" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Full Menu
+              </button>
             </div>
           </div>
         </div>
@@ -414,15 +541,12 @@ export function MenuPageContent({
       </section>
 
       {/* Menu Items */}
-      <section className="py-8">
+      <section className="py-8 min-h-[400px]">
         <div className="container-wide">
           {activeCategory === 'all' ? (
             // Show all categories with headers
-            categoryOrder.map((category) => {
-              const items = itemsByCategory[category].filter(item =>
-                item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                item.description.toLowerCase().includes(searchQuery.toLowerCase())
-              );
+            categoriesToRender.map((category) => {
+              const items = displayItems.filter(item => item.category === category);
               if (items.length === 0) return null;
 
               return (
@@ -432,6 +556,7 @@ export function MenuPageContent({
                       <Leaf className="h-6 w-6 text-green-600" />
                     )}
                     {categoryLabels[category]}
+                    <span className="text-sm font-normal text-muted-foreground ml-2">({items.length})</span>
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {items.map((item, index) => (
@@ -441,7 +566,10 @@ export function MenuPageContent({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: index * 0.05 }}
                       >
-                        <MenuItemCard item={item} />
+                        <MenuItemCard
+                          item={item}
+                          isInWeeklyMenu={isItemInWeekly(item.id)}
+                        />
                       </motion.div>
                     ))}
                   </div>
@@ -451,16 +579,38 @@ export function MenuPageContent({
           ) : (
             // Show filtered category
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredItems.map((item, index) => (
+              {displayItems.map((item, index) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
-                  <MenuItemCard item={item} />
+                  <MenuItemCard
+                    item={item}
+                    isInWeeklyMenu={isItemInWeekly(item.id)}
+                  />
                 </motion.div>
               ))}
+            </div>
+          )}
+
+          {displayItems.length === 0 && (
+            <div className="text-center py-20">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mb-4">
+                <Search className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-medium">No items found</h3>
+              <p className="text-muted-foreground">Try adjusting your filters or search query.</p>
+              {showFullMenu && (
+                <Button
+                  variant="link"
+                  onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
+                  className="mt-2 text-emerald"
+                >
+                  Clear all filters
+                </Button>
+              )}
             </div>
           )}
         </div>

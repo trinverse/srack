@@ -23,10 +23,18 @@ export default async function AdminMenuPage() {
     .from('menu_settings')
     .select('*');
 
+  // Fetch weekly menus for upcoming Monday and Thursday
+  // We'll fetch all weekly_menus and filter in memory or just fetch recent ones
+  const { data: weeklyMenus } = await supabase
+    .from('weekly_menus')
+    .select('*')
+    .gt('menu_date', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]); // last 7 days onwards
+
   return (
     <MenuManagement
       initialMenuItems={menuItems || []}
       initialSettings={settings || []}
+      initialWeeklyMenus={weeklyMenus || []}
     />
   );
 }

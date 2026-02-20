@@ -63,6 +63,12 @@ export default async function MenuPage() {
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
 
+  // Fetch weekly menus for upcoming Monday and Thursday
+  const { data: weeklyMenus } = await supabase
+    .from('weekly_menus')
+    .select('*')
+    .gt('menu_date', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+
   if (error) {
     console.error('Error fetching menu:', error);
     return (
@@ -80,6 +86,7 @@ export default async function MenuPage() {
       mondayActive={mondayActive}
       thursdayActive={thursdayActive}
       pickupLocations={pickupLocations || []}
+      weeklyMenus={weeklyMenus || []}
     />
   );
 }

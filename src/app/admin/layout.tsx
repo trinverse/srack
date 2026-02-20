@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu as MenuIcon,
   X,
+  MessageSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/auth-context';
@@ -21,6 +22,7 @@ import { cn } from '@/lib/utils';
 const adminNavItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/menu', label: 'Menu Management', icon: UtensilsCrossed },
+  { href: '/admin/requests', label: 'Customer Box', icon: MessageSquare },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
   { href: '/admin/customers', label: 'Customers', icon: Users },
   { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
