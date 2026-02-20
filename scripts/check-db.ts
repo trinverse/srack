@@ -17,8 +17,8 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 async function checkDb() {
     const { data, error } = await supabase
         .from('menu_items')
-        .select('name, image_url')
-        .limit(5);
+        .select('name, image_url, is_active')
+        .or('name.ilike.%Aloo Saag%,name.ilike.%Palak Choley%,name.ilike.%Achari Paneer%');
 
     if (error) {
         console.error('Error:', error.message);

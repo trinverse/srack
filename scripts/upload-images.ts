@@ -71,7 +71,7 @@ const MANUAL_OVERRIDES: Record<string, string> = {
     'dahiwalealoo': 'dahialoo',
     'bainganaloo': 'aloobaingan',
     'gobialoo': 'aloogobi',
-    'aloosaag': 'saagaloo',
+    'aloosaag': 'saagaaloo',
     'vegjalfrezi': 'vegetablejalfrezi',
     'vegkolhapuri': 'vegetablekolhapuri',
     'vegkorma': 'vegetablekorma',
@@ -109,9 +109,6 @@ const MANUAL_OVERRIDES: Record<string, string> = {
     'vaalnusaak': 'vaalnushaak',
     'kalachanashaak': 'kalachananushaak',
     'kalachana': 'kalachananushaak',
-    'afghanchicken': 'afghanichickencurry',
-    'afghanichicken': 'afghanichickencurry',
-    'aloobhajimarathidrypotatocurry': 'marathialoobhajisukhi',
     'faralialoosabji': 'fararialoosabji',
 };
 
