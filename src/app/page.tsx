@@ -17,7 +17,7 @@ export default async function Home() {
   const supabase = await createClient();
   const { data: menuItems } = await supabase
     .from('menu_items')
-    .select('id, name, description, price, category, is_popular, image_url')
+    .select('id, name, description, single_price, price_16oz, price_8oz, category, is_popular, image_url')
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
 
@@ -28,8 +28,12 @@ export default async function Home() {
   let popularItems = (menuItems || [])
     .map(item => {
       const localImages = galleryManifest[item.id];
+      // Determine display price from available options
+      const displayPrice = (item.single_price || item.price_16oz || item.price_8oz) ?? undefined;
+
       return {
         ...item,
+        price: displayPrice,
         image_url: localImages?.[0] || item.image_url || null,
       };
     })

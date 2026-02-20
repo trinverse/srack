@@ -1,5 +1,6 @@
-import fs from 'fs';
-import path from 'path';
+// Static list of image files - generated at build/commit time
+// This avoids fs.readdirSync which doesn't work on Vercel serverless
+import menuImageFiles from './menu-image-files.json';
 
 // Normalize: lowercase, remove all non-alphanumeric
 export function normalize(str: string) {
@@ -134,21 +135,19 @@ interface FileEntry {
 export function buildGalleryManifest(
     menuItems: { id: string; name: string }[]
 ): Record<string, string[]> {
-    const menuImagesDir = path.join(process.cwd(), 'public', 'menu-images');
     const galleryManifest: Record<string, string[]> = {};
 
-    if (!fs.existsSync(menuImagesDir)) {
-        console.warn('Public menu-images directory not found.');
-        return galleryManifest;
-    }
-
-    const files = fs.readdirSync(menuImagesDir);
-    const validFiles = files.filter(file => /\.(jpg|jpeg|png|webp|avif)$/i.test(file));
+    // Use the static list of image files (imported from JSON)
+    const validFiles: string[] = (menuImageFiles as string[]).filter(
+        (file: string) => /\.(jpg|jpeg|png|webp|avif)$/i.test(file)
+    );
 
     // Pre-process all file normalized base names once
     const fileIndex: FileEntry[] = [];
     for (const file of validFiles) {
-        const baseName = path.parse(file).name;
+        // Extract base name without extension
+        const lastDot = file.lastIndexOf('.');
+        const baseName = lastDot > 0 ? file.slice(0, lastDot) : file;
         const cleanBaseName = baseName.replace(/\(\d+\)/g, '').replace(/\s\d+$/, '').replace(/\.\d+$/, '').trim();
         const norm = normalize(cleanBaseName);
         const normStripped = norm.replace(/\d+$/, '');
