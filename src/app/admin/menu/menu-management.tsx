@@ -11,16 +11,20 @@ import {
   Save,
   X,
   Loader2,
+  Calendar,
+  Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
-import type { MenuItem, MenuSetting, MenuCategory, DietaryTag, SpiceLevel } from '@/types/database';
+import type { MenuItem, MenuSetting, MenuCategory, DietaryTag, SpiceLevel, WeeklyMenu } from '@/types/database';
+import { getNextWeekday, getISOString, formatDate } from '@/lib/date-utils';
 
 interface MenuManagementProps {
   initialMenuItems: MenuItem[];
   initialSettings: MenuSetting[];
+  initialWeeklyMenus: WeeklyMenu[];
 }
 
 const categoryLabels: Record<MenuCategory, string> = {
@@ -49,11 +53,12 @@ const dietaryTagOptions: DietaryTag[] = [
   'mild',
 ];
 
-export function MenuManagement({ initialMenuItems, initialSettings }: MenuManagementProps) {
+export function MenuManagement({ initialMenuItems, initialSettings, initialWeeklyMenus }: MenuManagementProps) {
   const supabase = createClient();
 
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
   const [settings, setSettings] = useState<MenuSetting[]>(initialSettings);
+  const [weeklyMenus, setWeeklyMenus] = useState<WeeklyMenu[]>(initialWeeklyMenus);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<MenuCategory | 'all'>('all');
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
@@ -127,6 +132,54 @@ export function MenuManagement({ initialMenuItems, initialSettings }: MenuManage
     setEditingItem(null);
     setIsCreating(false);
     setFormData({});
+  };
+
+  // Weekly Menu Logic
+  const nextMonday = getNextWeekday('Monday');
+  const nextThursday = getNextWeekday('Thursday');
+  const nextMondayISO = getISOString(nextMonday);
+  const nextThursdayISO = getISOString(nextThursday);
+
+  const toggleWeeklyMenu = async (itemId: string, day: 'monday' | 'thursday') => {
+    const targetDate = day === 'monday' ? nextMondayISO : nextThursdayISO;
+    const existing = weeklyMenus.find(
+      wm => wm.menu_item_id === itemId && wm.order_day === day && wm.menu_date === targetDate
+    );
+
+    if (existing) {
+      // Remove
+      const { error } = await supabase
+        .from('weekly_menus')
+        .delete()
+        .eq('id', existing.id);
+
+      if (!error) {
+        setWeeklyMenus(weeklyMenus.filter(wm => wm.id !== existing.id));
+      }
+    } else {
+      // Add
+      const { data, error } = await supabase
+        .from('weekly_menus')
+        .insert({
+          menu_item_id: itemId,
+          order_day: day,
+          menu_date: targetDate,
+          is_available: true
+        })
+        .select()
+        .single();
+
+      if (!error && data) {
+        setWeeklyMenus([...weeklyMenus, data]);
+      }
+    }
+  };
+
+  const isItemSelectedForDay = (itemId: string, day: 'monday' | 'thursday') => {
+    const targetDate = day === 'monday' ? nextMondayISO : nextThursdayISO;
+    return weeklyMenus.some(
+      wm => wm.menu_item_id === itemId && wm.order_day === day && wm.menu_date === targetDate
+    );
   };
 
   const handleSave = async () => {
@@ -326,6 +379,37 @@ export function MenuManagement({ initialMenuItems, initialSettings }: MenuManage
                         ? `8oz: $${item.price_8oz?.toFixed(2)} | 16oz: $${item.price_16oz?.toFixed(2)}`
                         : `$${item.single_price?.toFixed(2)}`}
                     </p>
+                    {/* Day Selectors */}
+                    <div className="flex gap-2 mt-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={cn(
+                          'h-7 px-2 text-[10px] uppercase font-bold tracking-wider',
+                          isItemSelectedForDay(item.id, 'monday')
+                            ? 'bg-emerald text-white border-emerald hover:bg-emerald-dark'
+                            : 'text-muted-foreground'
+                        )}
+                        onClick={() => toggleWeeklyMenu(item.id, 'monday')}
+                      >
+                        {isItemSelectedForDay(item.id, 'monday') && <Check className="h-3 w-3 mr-1" />}
+                        Monday
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={cn(
+                          'h-7 px-2 text-[10px] uppercase font-bold tracking-wider',
+                          isItemSelectedForDay(item.id, 'thursday')
+                            ? 'bg-gold text-white border-gold hover:bg-gold-dark'
+                            : 'text-muted-foreground'
+                        )}
+                        onClick={() => toggleWeeklyMenu(item.id, 'thursday')}
+                      >
+                        {isItemSelectedForDay(item.id, 'thursday') && <Check className="h-3 w-3 mr-1" />}
+                        Thursday
+                      </Button>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
