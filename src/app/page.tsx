@@ -31,10 +31,15 @@ export default async function Home() {
       // Determine display price from available options
       const displayPrice = (item.single_price || item.price_16oz || item.price_8oz) ?? undefined;
 
+      // Prioritize cloud URL from DB if it exists and is a full URL
+      // Otherwise fallback to local manifest images
+      const cloudImage = item.image_url?.startsWith('http') ? item.image_url : null;
+      const finalImage = cloudImage || localImages?.[0] || item.image_url || null;
+
       return {
         ...item,
         price: displayPrice,
-        image_url: localImages?.[0] || item.image_url || null,
+        image_url: finalImage,
       };
     })
     .filter(item => item.image_url); // Only items with images

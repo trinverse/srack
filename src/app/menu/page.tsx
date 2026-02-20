@@ -27,11 +27,16 @@ export default async function MenuPage() {
   // Merge local matches with items
   const enrichedMenuItems = menuItems?.map(item => {
     const localImages = galleryManifest[item.id];
+
+    // If we have a cloud URL in the database, use it as main image
+    // Otherwise fallback to local images if they exist
     let mainImage = item.image_url;
     let gallery = null;
 
     if (localImages && localImages.length > 0) {
-      mainImage = localImages[0];
+      if (!mainImage || !mainImage.startsWith('http')) {
+        mainImage = localImages[0];
+      }
       gallery = localImages;
     }
 
