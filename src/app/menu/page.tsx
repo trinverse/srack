@@ -1,6 +1,8 @@
+
 import { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { MenuPageContent } from './menu-page-content';
+import { buildGalleryManifest } from '@/lib/image-matcher';
 
 export const metadata: Metadata = {
   title: 'Tiffin Menu',
@@ -18,6 +20,32 @@ export default async function MenuPage() {
     .select('*')
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
+
+  // Build image manifest from local files
+  const galleryManifest = buildGalleryManifest(menuItems || []);
+
+  // Merge local matches with items
+  const enrichedMenuItems = menuItems?.map(item => {
+    const localImages = galleryManifest[item.id];
+
+    // If we have a cloud URL in the database, use it as main image
+    // Otherwise fallback to local images if they exist
+    let mainImage = item.image_url;
+    let gallery = null;
+
+    if (localImages && localImages.length > 0) {
+      if (!mainImage || !mainImage.startsWith('http')) {
+        mainImage = localImages[0];
+      }
+      gallery = localImages;
+    }
+
+    return {
+      ...item,
+      image_url: mainImage,
+      gallery_images: gallery
+    };
+  }) || [];
 
   // Fetch menu settings
   const { data: settings } = await supabase
@@ -47,7 +75,7 @@ export default async function MenuPage() {
 
   return (
     <MenuPageContent
-      menuItems={menuItems || []}
+      menuItems={enrichedMenuItems}
       menuActive={menuActive}
       mondayActive={mondayActive}
       thursdayActive={thursdayActive}

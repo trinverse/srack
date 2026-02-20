@@ -1,0 +1,35 @@
+﻿[dotenv@17.3.1] injecting env (4) from .env.local -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+--- RESULTS WITH SMART + MANUAL MATCHING ---
+Total Active Menu Items: 237
+Matched: 211
+Still Unmatched: 26
+Match Rate: 89.0%
+
+Still unmatched items:
+  Γ¥î Aloo Bhaji Marathi (Dry Potato Curry)  [veg_entrees]  (norm: aloobhajimarathi)
+  Γ¥î Aloo Karela  [veg_entrees]  (norm: alookarela)
+  Γ¥î Aloo Saag  [veg_entrees]  (norm: aloosaag)
+  Γ¥î Bagare Baigan (Guti Vankaya)  [veg_entrees]  (norm: bagarebaigan)
+  Γ¥î Cabbage Kofta  [veg_entrees]  (norm: cabbagekofta)
+  Γ¥î Chana Saak  [dal_entrees]  (norm: chanasaak)
+  Γ¥î Coriander Chicken Masala  [non_veg_entrees]  (norm: corianderchickenmasala)
+  Γ¥î Dhaba Paneer  [veg_entrees]  (norm: dhabapaneer)
+  Γ¥î Dhaba Style Kaju Curry  [veg_entrees]  (norm: dhabastylekajucurry)
+  Γ¥î Diabetic Roti  [roties_rice]  (norm: diabeticroti)
+  Γ¥î Dill Aloo  [veg_entrees]  (norm: dillaloo)
+  Γ¥î Guvar Aloo  [veg_entrees]  (norm: guvaraloo)
+  Γ¥î Hydrabadi Nawabi Chicken  [non_veg_entrees]  (norm: hydrabadinawabichicken)
+  Γ¥î Kadai Bhindi  [veg_entrees]  (norm: kadaibhindi)
+  Γ¥î Methi Aloo  [veg_entrees]  (norm: methialoo)
+  Γ¥î Navratan Pulao  [roties_rice]  (norm: navratanpulao)
+  Γ¥î Palak Chana Daal  [dal_entrees]  (norm: palakchanadaal)
+  Γ¥î Paneer Corn Masala  [veg_entrees]  (norm: paneercornmasala)
+  Γ¥î Paneer Curry  [veg_entrees]  (norm: paneercurry)
+  Γ¥î Paneer Mushroom Masala  [veg_entrees]  (norm: paneermushroommasala)
+  Γ¥î Rajasthani Moong Daal  [dal_entrees]  (norm: rajasthanimoongdaal)
+  Γ¥î Saffron Rice Pulao  [roties_rice]  (norm: saffronricepulao)
+  Γ¥î Tamarind Rice  [roties_rice]  (norm: tamarindrice)
+  Γ¥î Tindora Capsicum  [veg_entrees]  (norm: tindoracapsicum)
+  Γ¥î Veg Kadai  [veg_entrees]  (norm: vegkadai)
+  Γ¥î White Paneer Korma  [veg_entrees]  (norm: whitepaneerkorma)

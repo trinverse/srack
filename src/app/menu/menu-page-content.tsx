@@ -3,12 +3,18 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, Flame, Leaf, AlertCircle, ShoppingCart, Plus, Minus } from 'lucide-react';
+import { Calendar, Clock, Flame, Leaf, AlertCircle, ShoppingCart, Plus, Minus, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCart } from '@/context/cart-context';
 import { cn } from '@/lib/utils';
-import type { MenuItem, PickupLocation, MenuCategory } from '@/types/database';
+import type { MenuItem as BaseMenuItem, PickupLocation, MenuCategory } from '@/types/database';
+
+interface MenuItem extends BaseMenuItem {
+  gallery_images?: string[] | null;
+}
 
 interface MenuPageContentProps {
   menuItems: MenuItem[];
@@ -51,6 +57,7 @@ function MenuItemCard({ item }: { item: MenuItem }) {
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState<'8oz' | '16oz'>('8oz');
   const [quantity, setQuantity] = useState(1);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const price = item.has_size_options
     ? selectedSize === '8oz'
@@ -58,14 +65,87 @@ function MenuItemCard({ item }: { item: MenuItem }) {
       : item.price_16oz
     : item.single_price;
 
+  const images = item.gallery_images && item.gallery_images.length > 0
+    ? item.gallery_images.filter(Boolean)
+    : item.image_url ? [item.image_url] : [];
+
   const handleAddToCart = () => {
     addItem(item, item.has_size_options ? selectedSize : null, quantity);
     setQuantity(1);
   };
 
+  const nextImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <CardContent className="p-4">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col group border-border/50 hover:border-emerald/30">
+      <div className="relative w-full h-52 bg-muted/20 overflow-hidden flex items-center justify-center">
+        {images.length > 0 ? (
+          <motion.div
+            key={currentImageIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={images[currentImageIndex]}
+              alt={`${item.name} - Image ${currentImageIndex + 1}`}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              onError={() => {
+                // Handle image load error silently, let background show
+              }}
+            />
+          </motion.div>
+        ) : (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-emerald/5 to-primary/5 text-emerald/20">
+            <div className="w-16 h-16 rounded-full border-2 border-emerald/10 flex items-center justify-center text-3xl font-bold">
+              {item.name.charAt(0)}
+            </div>
+            <span className="text-[10px] uppercase tracking-widest mt-2 font-semibold">Spice Rack Atlanta</span>
+          </div>
+        )}
+
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+              {images.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full transition-colors",
+                    idx === currentImageIndex ? "bg-white" : "bg-white/50"
+                  )}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+      <CardContent className="p-4 flex-1 flex flex-col">
         <div className="flex justify-between items-start mb-2">
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
@@ -112,7 +192,7 @@ function MenuItemCard({ item }: { item: MenuItem }) {
           </div>
         </div>
 
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+        <p className="text-sm text-muted-foreground mb-4 line-clamp-2 flex-1">
           {item.description}
         </p>
 
@@ -184,6 +264,7 @@ export function MenuPageContent({
 }: MenuPageContentProps) {
   const { state } = useCart();
   const [activeCategory, setActiveCategory] = useState<MenuCategory | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Group items by category
   const itemsByCategory = categoryOrder.reduce((acc, category) => {
@@ -191,9 +272,12 @@ export function MenuPageContent({
     return acc;
   }, {} as Record<MenuCategory, MenuItem[]>);
 
-  const filteredItems = activeCategory === 'all'
-    ? menuItems
-    : menuItems.filter(item => item.category === activeCategory);
+  const filteredItems = menuItems.filter(item => {
+    const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   if (!menuActive) {
     return (
@@ -279,35 +363,52 @@ export function MenuPageContent({
         </div>
       </section>
 
-      {/* Category Filter */}
-      <section className="py-4 border-b sticky top-16 bg-background z-40">
+      {/* Category Filter and Search */}
+      <section className="py-2 border-b sticky top-16 bg-background/95 backdrop-blur-md z-40 shadow-sm transition-all">
         <div className="container-wide">
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            <button
-              onClick={() => setActiveCategory('all')}
-              className={cn(
-                'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
-                activeCategory === 'all'
-                  ? 'bg-emerald text-white'
-                  : 'bg-muted hover:bg-muted/80'
-              )}
-            >
-              All Items
-            </button>
-            {categoryOrder.map((category) => (
+          <div className="flex flex-col lg:flex-row gap-3 items-center justify-between">
+            {/* Categories */}
+            <div className="flex gap-1.5 overflow-x-auto pb-0 scrollbar-hide w-full lg:w-auto">
               <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
+                onClick={() => setActiveCategory('all')}
                 className={cn(
-                  'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
-                  activeCategory === category
-                    ? 'bg-emerald text-white'
-                    : 'bg-muted hover:bg-muted/80'
+                  'px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shadow-sm ring-1 ring-inset',
+                  activeCategory === 'all'
+                    ? 'bg-emerald text-white ring-emerald'
+                    : 'bg-white text-muted-foreground ring-border hover:bg-muted/50'
                 )}
               >
-                {categoryLabels[category]}
+                All Items
               </button>
-            ))}
+              {categoryOrder.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  className={cn(
+                    'px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shadow-sm ring-1 ring-inset',
+                    activeCategory === category
+                      ? 'bg-emerald text-white ring-emerald'
+                      : 'bg-white text-muted-foreground ring-border hover:bg-muted/50'
+                  )}
+                >
+                  {categoryLabels[category]}
+                </button>
+              ))}
+            </div>
+
+            {/* Search Bar - More Compact */}
+            <div className="relative w-full lg:max-w-[280px] group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-emerald" />
+              </div>
+              <Input
+                type="text"
+                placeholder="Search menu..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 pr-3 h-9 w-full bg-muted/20 border-border focus:border-emerald/50 focus:bg-background transition-all rounded-lg text-sm"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -318,7 +419,10 @@ export function MenuPageContent({
           {activeCategory === 'all' ? (
             // Show all categories with headers
             categoryOrder.map((category) => {
-              const items = itemsByCategory[category];
+              const items = itemsByCategory[category].filter(item =>
+                item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                item.description.toLowerCase().includes(searchQuery.toLowerCase())
+              );
               if (items.length === 0) return null;
 
               return (
