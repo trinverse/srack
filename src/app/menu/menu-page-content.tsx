@@ -364,15 +364,15 @@ export function MenuPageContent({
       </section>
 
       {/* Category Filter and Search */}
-      <section className="py-6 border-b sticky top-16 bg-background/95 backdrop-blur-md z-40 shadow-sm transition-all">
+      <section className="py-2 border-b sticky top-16 bg-background/95 backdrop-blur-md z-40 shadow-sm transition-all">
         <div className="container-wide">
-          <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
+          <div className="flex flex-col lg:flex-row gap-3 items-center justify-between">
             {/* Categories */}
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide w-full lg:w-auto">
+            <div className="flex gap-1.5 overflow-x-auto pb-0 scrollbar-hide w-full lg:w-auto">
               <button
                 onClick={() => setActiveCategory('all')}
                 className={cn(
-                  'px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all shadow-sm ring-1 ring-inset',
+                  'px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shadow-sm ring-1 ring-inset',
                   activeCategory === 'all'
                     ? 'bg-emerald text-white ring-emerald'
                     : 'bg-white text-muted-foreground ring-border hover:bg-muted/50'
@@ -385,7 +385,7 @@ export function MenuPageContent({
                   key={category}
                   onClick={() => setActiveCategory(category)}
                   className={cn(
-                    'px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all shadow-sm ring-1 ring-inset',
+                    'px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shadow-sm ring-1 ring-inset',
                     activeCategory === category
                       ? 'bg-emerald text-white ring-emerald'
                       : 'bg-white text-muted-foreground ring-border hover:bg-muted/50'
@@ -396,17 +396,17 @@ export function MenuPageContent({
               ))}
             </div>
 
-            {/* Search Bar - More Prominent */}
-            <div className="relative w-full lg:max-w-md group">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-emerald" />
+            {/* Search Bar - More Compact */}
+            <div className="relative w-full lg:max-w-[280px] group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-emerald" />
               </div>
               <Input
                 type="text"
-                placeholder="Search menu dishes..."
+                placeholder="Search menu..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-11 pr-4 h-12 w-full bg-muted/30 border-2 border-transparent focus:border-emerald/30 focus:bg-background transition-all rounded-xl shadow-inner text-base"
+                className="pl-9 pr-3 h-9 w-full bg-muted/20 border-border focus:border-emerald/50 focus:bg-background transition-all rounded-lg text-sm"
               />
             </div>
           </div>
