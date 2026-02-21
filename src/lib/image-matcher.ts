@@ -47,6 +47,8 @@ const SPELLING_ALIASES: Record<string, string> = {
     'rasavalu': 'rasavala', 'rasavala': 'rasavalu',
     'saak': 'shaak', 'shaak': 'saak',
     'chana': 'channa',
+    'carrot': 'gajar', 'gajar': 'carrot',
+    'pav': 'paav', 'paav': 'pav',
 };
 
 // Direct item-name -> file-name overrides for tricky cases
@@ -98,6 +100,13 @@ const MANUAL_OVERRIDES: Record<string, string> = {
     'afghanchicken': 'afghanichickencurry',
     'aloobhajimarathidrypotatocurry': 'marathialoobhajisukhi',
     'faralialoosabji': 'fararialoosabji',
+    'saltylassi': 'saltedlassi',
+    'paavbhaji': 'batatabhaji', // Fallback if no specific paav bhaji exists, or maybe user has it named differently
+    'tamarindchutney': 'tamrindchutney',
+    'poha': 'breakfastpoha',
+    'sabudanakhichdi': 'sabudanakhichdi2',
+    'upma': 'upma',
+    'daalvada': 'daalvada2',
 };
 
 // Suffix words that can be added/removed in matching
