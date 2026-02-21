@@ -1,0 +1,1485 @@
+[
+  {
+    "name": "Paav Bhaji",
+    "description": "Spicy mashed veggies with buttery buns, a Mumbai street classic you\u2019ll devour.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 0
+  },
+  {
+    "name": "Vada Paav",
+    "description": "Mumbai\u2019s spicy potato fritter in a soft bun, crunchy, fiery, and addictive.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 1
+  },
+  {
+    "name": "Aloo Bonda",
+    "description": "Spiced potato balls in crispy gram flour, a golden snack you can\u2019t stop eating.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 2
+  },
+  {
+    "name": "Samosa",
+    "description": "Crispy pastry stuffed with spiced potatoes, flaky and bursting with flavor.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 3
+  },
+  {
+    "name": "Dabeli",
+    "description": "Gujarati spiced potatoes in a pav with peanuts, sweet, spicy, and irresistible.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 4
+  },
+  {
+    "name": "Dahi Vada",
+    "description": "Soft lentil dumplings in spiced yogurt, cool, creamy, and oh-so-refreshing.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 5
+  },
+  {
+    "name": "Misal Paav",
+    "description": "Spicy Maharashtrian lentil curry with bread,\uff01crunchy toppings make it a must-try.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 6
+  },
+  {
+    "name": "Paneer Kathi Rolls",
+    "description": "Juicy paneer wrapped in a flaky roll, street-style goodness in every bite.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 7
+  },
+  {
+    "name": "Chicken Biriyani",
+    "description": "Fragrant rice layered with spiced chicken, a feast you\u2019ll dream about.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 8
+  },
+  {
+    "name": "Veg Biriyani",
+    "description": "Aromatic rice with veggies and spices, a veggie lover\u2019s flavor explosion.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 9
+  },
+  {
+    "name": "Chilli Chicken with Fried Rice",
+    "description": "Indo-Chinese spicy chicken with crispy fried rice, pure comfort.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 10
+  },
+  {
+    "name": "Chilli Paneer with Fried Rice",
+    "description": "Spicy paneer with fried rice, an Indo-Chinese treat you\u2019ll crave.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 11
+  },
+  {
+    "name": "Chilli Chicken with Hakka Noodles",
+    "description": "Spicy chicken with stir-fried noodles, bold and slurpy good.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 12
+  },
+  {
+    "name": "Chilli Paneer with Hakka Noodles",
+    "description": "Spicy paneer with hakka noodles, a veggie twist you\u2019ll love.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 13
+  },
+  {
+    "name": "Hara Bhara Kabab",
+    "description": "Green veggie patties with spices, crispy outside, tender inside\u2014pure bliss.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 14
+  },
+  {
+    "name": "Tawa Pulao",
+    "description": "Street-style rice with veggies and spices, sizzling and packed with flavor.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 15
+  },
+  {
+    "name": "Daal Vada",
+    "description": "Crispy lentil fritters with bold spices, a crunchy street snack you\u2019ll adore.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 16
+  },
+  {
+    "name": "Bombay Missle Paav",
+    "description": "Mumbai\u2019s spicy misal with soft paav, fiery and crunchy, a street classic you\u2019ll devour.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 17
+  },
+  {
+    "name": "Extra Paav",
+    "description": "Soft, buttery paav buns, perfect for soaking up curry, a simple add-on you\u2019ll want more of.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 18
+  },
+  {
+    "name": "Bombay Vada Paav (Qty: 2 pieces) (V)",
+    "description": "Spiced potato fritters in buns, Mumbai-style, crispy and bold, a street snack you\u2019ll crave.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 19
+  },
+  {
+    "name": "Hara Bhara Kabab (Qty: 4) w/ Mint Chutneys (V, VG)",
+    "description": "Green veggie kababs with minty dip, crisp and fresh, a bite that hooks you instantly.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 20
+  },
+  {
+    "name": "Bread Pakora w/ Chutneys",
+    "description": "Spiced potato-stuffed bread, fried golden with chutneys, a crunchy treat you\u2019ll adore.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 21
+  },
+  {
+    "name": "Samosa (Qty: 4 pieces) (V, VG)",
+    "description": "Crispy pastries with spiced filling, flaky and bold, a street food classic you\u2019ll crave.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 22
+  },
+  {
+    "name": "Batata Vada with Chutney (3) (V, VG)",
+    "description": "Spiced potato balls, fried crisp with tangy chutney, a Bombay bite you\u2019ll want more of.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 23
+  },
+  {
+    "name": "Sabudana Vada (Qty: 3 pieces) w/ Chutney (V, VG)",
+    "description": "Crunchy sago fritters with chutney, light and spiced, a fasting snack you\u2019ll love.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 24
+  },
+  {
+    "name": "Matki Misle Paav",
+    "description": "Spicy moth bean curry with paav, topped with crunch, a Maharashtrian hit you\u2019ll crave.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 25
+  },
+  {
+    "name": "Mendu Vadai (Qty: 3 pieces) (V, VG)",
+    "description": "Crispy lentil donuts, South Indian-style, golden and bold, a snack you\u2019ll savor.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 26
+  },
+  {
+    "name": "Idlis Chutney & Sambar (Qty: 6 pieces) (V, VG)",
+    "description": "Soft idlis with chutney and sambar, light and tangy, a South Indian delight you\u2019ll adore.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 27
+  },
+  {
+    "name": "Daal Vada Gujarati (10 pieces) w/ Chutneys (V, VG)",
+    "description": "Spiced lentil fritters, crunchy and bold, a Gujarati street bite you\u2019ll want to dip.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 28
+  },
+  {
+    "name": "Methi Pakora",
+    "description": "Fenugreek fritters fried crisp, earthy and spiced, a rainy-day snack you\u2019ll crave.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 29
+  },
+  {
+    "name": "Gujarati Veg Muthia (12-15 pieces) (V, VG)",
+    "description": "Steamed veggie dumplings with spices, soft and flavorful, a Gujarati treat you\u2019ll love.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 30
+  },
+  {
+    "name": "Paneer Stuffed Pakora",
+    "description": "Paneer-filled fritters, crispy outside, creamy inside, a spiced snack you\u2019ll devour.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 31
+  },
+  {
+    "name": "Pani Puri (12 puri, potatoes, chana, sprout mix w/ paani and chutney and onion) (V, VG)",
+    "description": "Crispy puris with spicy water and fillings, a tangy burst you\u2019ll crave all day.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 32
+  },
+  {
+    "name": "Ragda Petis",
+    "description": "Spiced pea curry over potato patties, topped with crunch, a street chaat you\u2019ll adore.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 33
+  },
+  {
+    "name": "Samosa Chaat",
+    "description": "Crushed samosas with chutneys and yogurt, messy and spiced, a chaat lover\u2019s dream come true.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 34
+  },
+  {
+    "name": "Puran Poli (3) Special (V)",
+    "description": "Sweet lentil-stuffed flatbreads, soft and spiced, a Maharashtrian treat you\u2019ll savor.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 35
+  },
+  {
+    "name": "Paneer 65",
+    "description": "Spicy paneer bites, fried crisp with bold flavors, an Indo-Chinese kick you\u2019ll crave.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 36
+  },
+  {
+    "name": "Gobi Manchurian",
+    "description": "Crispy cauliflower in a tangy Manchurian sauce, bold and addictive, a street hit you\u2019ll love.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 37
+  },
+  {
+    "name": "Veg Manchurian w/ Fried Rice",
+    "description": "Veggie balls in a thick sauce with fried rice, Indo-Chinese comfort you\u2019ll devour.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 38
+  },
+  {
+    "name": "Chicken Manchurian with Fried Rice",
+    "description": "Juicy chicken in Manchurian sauce with fried rice, spicy and hearty, a must-try.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 39
+  },
+  {
+    "name": "Tofu-Veg Hakka Noodles",
+    "description": "Tofu and veggies tossed with hakka noodles, light and spiced, a slurpy delight you\u2019ll crave.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 40
+  },
+  {
+    "name": "Szechwan Paneer",
+    "description": "Paneer in a fiery Szechwan sauce, bold and spicy, an Indo-Chinese treat you\u2019ll love.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 41
+  },
+  {
+    "name": "Szechwan Noodles",
+    "description": "Spicy noodles with a Szechwan kick, slurpy and bold, a street dish you\u2019ll adore.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 42
+  },
+  {
+    "name": "Egg Puffs (2)",
+    "description": "Flaky pastries with spiced egg filling, crisp and savory, a quick bite you\u2019ll crave.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 43
+  },
+  {
+    "name": "Bombay Veg Frankie (Qty: 2) (V)",
+    "description": "Spiced veggies rolled in a soft wrap, Mumbai-style, a street roll you\u2019ll devour.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 44
+  },
+  {
+    "name": "Gujarati Dabeli (Qty: 2 pieces) (V)",
+    "description": "Spiced potato buns with peanuts and chutney, sweet and spicy, a Gujarat gem.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 45
+  },
+  {
+    "name": "Paneer Masala Puffs (2) (V)",
+    "description": "Flaky puffs with spiced paneer, crisp and creamy, a snack you\u2019ll want more of.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 46
+  },
+  {
+    "name": "Chicken 65",
+    "description": "Spicy fried chicken bites, juicy and bold, a South Indian classic you\u2019ll crave.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 47
+  },
+  {
+    "name": "Szechuan Chicken",
+    "description": "Chicken in a fiery Szechuan sauce, spicy and succulent, an Indo-Chinese hit you\u2019ll love.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 48
+  },
+  {
+    "name": "Veg Hakka Noodles with Tofu",
+    "description": "Veggies and tofu in slurpy hakka noodles, light and spiced, a street dish you\u2019ll adore.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 49
+  },
+  {
+    "name": "Chicken Kathi Roll with Eggs and Cheese (2)",
+    "description": "Spiced chicken, egg, and cheese in a roll, hearty and gooey, a street treat you\u2019ll crave.",
+    "category": "special_items",
+    "single_price": 9.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 50
+  },
+  {
+    "name": "Daal Vada",
+    "description": "Crispy lentil fritters with spices, a hearty start to your day.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 51
+  },
+  {
+    "name": "Poha",
+    "description": "Light Maharashtrian flattened rice with veggies, zesty and perfect for breakfast.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 52
+  },
+  {
+    "name": "Sabudana Khichdi",
+    "description": "Sago pearls with peanuts and spices, a fasting dish you\u2019ll crave anytime.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 53
+  },
+  {
+    "name": "Upma",
+    "description": "South Indian semolina with veggies, warm, spiced, and oh-so-comforting.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 54
+  },
+  {
+    "name": "Medhu Vadai with Sambar and Coconut Chutney",
+    "description": "Medhu Vadai with Sambar and Coconut Chutney",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 55
+  },
+  {
+    "name": "Idli with Sambar and Coconut Chutney",
+    "description": "Idli with Sambar and Coconut Chutney",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 56
+  },
+  {
+    "name": "Gujarati Handvo",
+    "description": "A savory lentil cake with veggies, crunchy top, soft inside\u2014pure joy.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 57
+  },
+  {
+    "name": "Khaman Dhokla",
+    "description": "Spongy chickpea flour cakes, steamed and tangy, a Gujarati delight.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 58
+  },
+  {
+    "name": "Rava Veg Dhokla",
+    "description": "Semolina cakes with veggies, light, fluffy, and bursting with flavor.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 59
+  },
+  {
+    "name": "Vati Daal Na Khaman",
+    "description": "Dense, tangy Gujarati lentil steamed snack, bold and irresistible.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 60
+  },
+  {
+    "name": "Gujarati Handvo (Breakfast) (V)",
+    "description": "A savory lentil-veggie cake, crisp outside, soft inside, a Gujarati breakfast you\u2019ll crave.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 61
+  },
+  {
+    "name": "Moong Daal Veg Dhokla",
+    "description": "Steamed moong dal cakes with veggies, spongy and spiced, a light bite you\u2019ll crave.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 62
+  },
+  {
+    "name": "Mix Veg Paratha",
+    "description": "Flaky flatbread stuffed with spiced veggies, crisp and hearty, a roti lover\u2019s dream come true.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 63
+  },
+  {
+    "name": "Aloo Matar Paratha",
+    "description": "Potato and pea-stuffed paratha, golden and spiced, a comforting bite you\u2019ll want with curd.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 64
+  },
+  {
+    "name": "Mooli Paratha",
+    "description": "Radish-stuffed flatbread with bold spices, flaky and flavorful, a rustic treat you\u2019ll adore.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 65
+  },
+  {
+    "name": "Paneer Cheese Paratha",
+    "description": "Paneer and cheese stuffed in a crispy paratha, gooey and spiced, pure indulgence you\u2019ll crave.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 66
+  },
+  {
+    "name": "Methi Palak Thepla",
+    "description": "Fenugreek and spinach in a thin, spiced flatbread, aromatic and fresh, a Gujarati gem.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 67
+  },
+  {
+    "name": "Palak Thepla",
+    "description": "Spinach-infused flatbread with subtle spices, soft and green, a light bite you\u2019ll love.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 68
+  },
+  {
+    "name": "Methi Thepla",
+    "description": "Fenugreek-laced flatbread, earthy and spiced, a Gujarati classic that\u2019s impossible to resist.",
+    "category": "breakfast",
+    "single_price": 8.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 69
+  },
+  {
+    "name": "Carrot Halwa",
+    "description": "Sweet, rich carrot pudding with milk, a warm hug in every spoonful.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 70
+  },
+  {
+    "name": "Gulab Jamun",
+    "description": "Soft dough balls soaked in rose-cardamom syrup, a sweet lover\u2019s dream.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 71
+  },
+  {
+    "name": "Rasmalai",
+    "description": "Spongy paneer balls in thickened milk, creamy and melt-in-your-mouth divine.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 72
+  },
+  {
+    "name": "Sevaiyaan",
+    "description": "Vermicelli in sweetened milk with nuts, a light, fragrant treat.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 73
+  },
+  {
+    "name": "Suji Ka Halwa",
+    "description": "Warm semolina pudding with ghee and sugar, simple and soul-satisfying.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 74
+  },
+  {
+    "name": "Mango Matho",
+    "description": "Creamy mango-yogurt dessert, cool, refreshing, and bursting with fruitiness.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 75
+  },
+  {
+    "name": "Custard Fruit Salad",
+    "description": "Silky custard with fresh fruits, a sweet, creamy medley you\u2019ll love.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 76
+  },
+  {
+    "name": "Kesari Halwa",
+    "description": "Saffron-kissed semolina pudding, aromatic and sweet, pure indulgence.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 77
+  },
+  {
+    "name": "Shrikhand",
+    "description": "Thick, sweetened yogurt with saffron and cardamom, a cool, luxurious delight.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 78
+  },
+  {
+    "name": "Dry Fruit Kheer",
+    "description": "Rice pudding with dried fruits and nuts, rich and festive perfection.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 79
+  },
+  {
+    "name": "Makhana Kheer",
+    "description": "Lotus seeds in creamy, sweet milk, light yet decadently delicious.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 80
+  },
+  {
+    "name": "Moriya Kheer",
+    "description": "Barnyard millet in sweetened milk, a fasting treat that\u2019s pure comfort.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 81
+  },
+  {
+    "name": "Atte Ka Halwa",
+    "description": "Warm wheat flour pudding with ghee and sugar, rich and comforting, a sweet hug you\u2019ll love.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 82
+  },
+  {
+    "name": "Lauki Ka Halwa",
+    "description": "Bottle gourd cooked into a sweet, spiced pudding, creamy and unique, a dessert you\u2019ll crave.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 83
+  },
+  {
+    "name": "Pinapple Halwa (Pineapple Halwa) (V)",
+    "description": "Juicy pineapple in a sweet, spiced halwa, tropical and rich, a treat you\u2019ll savor.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 84
+  },
+  {
+    "name": "Beet Root Halwa",
+    "description": "Vibrant beetroot pudding with ghee and nuts, earthy and sweet, a colorful delight you\u2019ll adore.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 85
+  },
+  {
+    "name": "Pineapple Kesari",
+    "description": "Saffron-kissed pineapple semolina pudding, aromatic and sweet, a South Indian gem you\u2019ll crave.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 86
+  },
+  {
+    "name": "Angoori Mango Rabdi",
+    "description": "Tiny mango dumplings in thick, sweetened milk, creamy and fruity, a royal bite you\u2019ll love.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 87
+  },
+  {
+    "name": "Sitafal Basundi",
+    "description": "Custard apple in a rich, thickened milk dessert, sweet and fragrant, pure indulgence you\u2019ll crave.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 88
+  },
+  {
+    "name": "Strawberry Rabdi",
+    "description": "Strawberry-infused thickened milk, creamy and tangy, a modern twist you\u2019ll want more of.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 89
+  },
+  {
+    "name": "Rava Laddoo",
+    "description": "Sweet semolina balls with nuts, crumbly and spiced, a festive treat you\u2019ll adore.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 90
+  },
+  {
+    "name": "Ganesh Churma Laddoo (Jaggery) (V, VG)",
+    "description": "Jaggery-sweetened wheat balls, rustic and rich, a Ganesh-favored sweet you\u2019ll crave.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 91
+  },
+  {
+    "name": "Boondi Ke Laddoo",
+    "description": "Crispy boondi bound in sweet syrup, juicy and spiced, a classic you\u2019ll love.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 92
+  },
+  {
+    "name": "Dryfruit Rabdi",
+    "description": "Thickened milk with a medley of dry fruits, rich and creamy, a decadent bite you\u2019ll savor.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 93
+  },
+  {
+    "name": "Rasgulla",
+    "description": "Spongy Bengali cheese balls in light syrup, soft and sweet, a dessert you\u2019ll crave.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 94
+  },
+  {
+    "name": "Gond Pak",
+    "description": "Nutty gond in a jaggery-sweet mix, chewy and rich, a winter treat you\u2019ll adore.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 95
+  },
+  {
+    "name": "Methi Ke Laddoo",
+    "description": "Fenugreek-laced sweet balls, earthy and spiced, a healthy indulgence you\u2019ll want more of.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 96
+  },
+  {
+    "name": "Mango Kheer",
+    "description": "Creamy rice pudding with mango puree, sweet and fruity, a summer delight you\u2019ll love.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 97
+  },
+  {
+    "name": "Dry Fruit Srikhand",
+    "description": "Thick yogurt with dry fruits and saffron, creamy and rich, a Gujarati gem you\u2019ll crave.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 98
+  },
+  {
+    "name": "Gulab Ki Kheer",
+    "description": "Rose-infused rice pudding, fragrant and sweet, a floral treat you\u2019ll savor.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 99
+  },
+  {
+    "name": "Fruit Custard",
+    "description": "Creamy custard with fresh fruits, light and sweet, a refreshing bite you\u2019ll adore.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 100
+  },
+  {
+    "name": "Mango Raas with Puris (Combo) (V)",
+    "description": "Sweet mango pulp with fluffy puris, juicy and spiced, a combo you\u2019ll crave.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 101
+  },
+  {
+    "name": "Falooda",
+    "description": "Layers of vermicelli, milk, and ice cream, cool and sweet, a dessert you\u2019ll love.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 102
+  },
+  {
+    "name": "Shahi Tukda",
+    "description": "Fried bread in thickened milk with nuts, rich and royal, a Mughal treat you\u2019ll crave.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 103
+  },
+  {
+    "name": "Sukhdi (Sweet) Gol Papdi (6 pieces) (V, VG)",
+    "description": "Jaggery-sweetened wheat squares, crumbly and rich, a Gujarati sweet you\u2019ll adore.",
+    "category": "dessert",
+    "single_price": 4.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 104
+  },
+  {
+    "name": "Tamarind Chutney",
+    "description": "Tangy tamarind with sweet-spicy notes, a zesty dip that lifts every bite you\u2019ll love.",
+    "category": "chutneys",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 105
+  },
+  {
+    "name": "Coriander Mint Chutney",
+    "description": "Fresh coriander and mint with a spicy kick, vibrant and bold, a chutney you\u2019ll crave.",
+    "category": "chutneys",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 106
+  },
+  {
+    "name": "Coconut Chutney",
+    "description": "Creamy coconut with a hint of spice, smooth and South Indian, a dip you\u2019ll adore.",
+    "category": "chutneys",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 107
+  },
+  {
+    "name": "Peanut Chutney",
+    "description": "Nutty peanuts with a spicy twist, rich and bold, a sidekick you\u2019ll want more of.",
+    "category": "chutneys",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 108
+  },
+  {
+    "name": "Tomato Chutney",
+    "description": "Spiced tomato puree, tangy and robust, a versatile dip you\u2019ll crave with everything.",
+    "category": "chutneys",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 109
+  },
+  {
+    "name": "Carrot Chili Pickles",
+    "description": "Crunchy carrots with a chili kick, tangy and spiced, a pickle you\u2019ll love to crunch.",
+    "category": "chutneys",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 110
+  },
+  {
+    "name": "Chili-Garlic 'Hot' Chutney",
+    "description": "Fiery garlic and chili blend, bold and spicy, a kick you\u2019ll crave on the side.",
+    "category": "chutneys",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 111
+  },
+  {
+    "name": "Fresh Mango Pickles",
+    "description": "Juicy mango chunks in a tangy-spicy mix, fresh and bold, a pickle you\u2019ll adore.",
+    "category": "chutneys",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 112
+  },
+  {
+    "name": "Athela Marcha (Fresh Pickled Chillies) (V, VG)",
+    "description": "Fresh chilies pickled with spices, crunchy and fiery, a zesty bite you\u2019ll crave.",
+    "category": "chutneys",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 113
+  },
+  {
+    "name": "Salty Lassi",
+    "description": "Cool, salted yogurt drink, refreshing and tangy, a perfect sip you\u2019ll want more of.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 114
+  },
+  {
+    "name": "Rose Lassi",
+    "description": "Rose-infused yogurt drink, sweet and floral, a cooling treat you\u2019ll love to sip.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 115
+  },
+  {
+    "name": "Sprouted Moong Salad",
+    "description": "Crunchy sprouted moong with spices, fresh and light, a healthy bite you\u2019ll crave.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 116
+  },
+  {
+    "name": "Three Beans Salad",
+    "description": "A trio of beans with a tangy dressing, hearty and fresh, a salad you\u2019ll adore.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 117
+  },
+  {
+    "name": "Mix Fruit Salad",
+    "description": "Juicy mixed fruits with a hint of spice, sweet and refreshing, a bowl you\u2019ll love.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 118
+  },
+  {
+    "name": "Carrot Cabbage Sambhario / Salad",
+    "description": "Spiced carrot and cabbage mix, crunchy and bold, a Gujarati side you\u2019ll crave.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "is_active": true,
+    "sort_order": 119
+  },
+  {
+    "name": "Protine Salad (Protein Salad) (V, VG)",
+    "description": "Protein-packed salad with beans and spices, hearty and fresh, a bite you\u2019ll adore.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [],
+    "is_active": true,
+    "sort_order": 120
+  },
+  {
+    "name": "Boondi Raita",
+    "description": "Crispy boondi in spiced yogurt, cool and crunchy, a sidekick you\u2019ll want with curry.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 121
+  },
+  {
+    "name": "Beet Root Raita",
+    "description": "Vibrant beetroot in creamy yogurt, sweet and spiced, a refreshing dip you\u2019ll love.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 122
+  },
+  {
+    "name": "Cucumbar Raita",
+    "description": "Cool cucumber in spiced yogurt, light and fresh, a soothing side you\u2019ll crave.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 123
+  },
+  {
+    "name": "Desi Home Made Dahi",
+    "description": "Thick, creamy homemade yogurt, pure and tangy, a classic you\u2019ll want on every plate.",
+    "category": "sides",
+    "single_price": 3.99,
+    "has_size_options": false,
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "is_active": true,
+    "sort_order": 124
+  }
+]

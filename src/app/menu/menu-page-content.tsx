@@ -1,18 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Calendar, Clock, Flame, Leaf, AlertCircle, ShoppingCart, Plus, Minus, Search, ChevronLeft, ChevronRight, CheckCircle2, MessageSquarePlus, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, Clock, Flame, Leaf, AlertCircle, ShoppingCart, Plus, Minus, Search, ChevronLeft, ChevronRight, CheckCircle2, MessageSquarePlus, Loader2, X } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCart } from '@/context/cart-context';
+import { useAuth } from '@/context/auth-context';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import type { MenuItem as BaseMenuItem, PickupLocation, MenuCategory, WeeklyMenu } from '@/types/database';
-import { getNextWeekday, getISOString, formatDate } from '@/lib/date-utils';
+import { getNextWeekday, getISOString, formatDate, getNearestActiveDay } from '@/lib/date-utils';
 
 interface MenuItem extends BaseMenuItem {
   gallery_images?: string[] | null;
@@ -33,14 +34,22 @@ const categoryLabels: Record<MenuCategory, string> = {
   dal_entrees: 'Dal Entrees',
   roties_rice: 'Roties & Rice',
   special_items: 'Special Items',
+  breakfast: 'Breakfast',
+  dessert: 'Dessert',
+  chutneys: 'Chutneys',
+  sides: 'Sides',
 };
 
 const categoryOrder: MenuCategory[] = [
+  'special_items',
   'veg_entrees',
   'non_veg_entrees',
   'dal_entrees',
   'roties_rice',
-  'special_items',
+  'breakfast',
+  'dessert',
+  'chutneys',
+  'sides',
 ];
 
 const spiceLevelColors = {
@@ -59,11 +68,13 @@ const dietaryTagLabels: Record<string, { label: string; color: string }> = {
 function MenuItemCard({
   item,
   isInWeeklyMenu = true,
-  onRequested
+  onRequested,
+  onImageClick
 }: {
   item: MenuItem;
   isInWeeklyMenu?: boolean;
   onRequested?: () => void;
+  onImageClick?: (url: string) => void;
 }) {
   const { addItem } = useCart();
   const supabase = createClient();
@@ -91,7 +102,6 @@ function MenuItemCard({
   const handleRequest = async () => {
     setIsRequesting(true);
     try {
-      // Get current customer if logged in (optional but good)
       const { data: { user } } = await supabase.auth.getUser();
 
       const { error } = await supabase
@@ -129,7 +139,10 @@ function MenuItemCard({
 
   return (
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col group border-border/50 hover:border-emerald/30">
-      <div className="relative w-full h-52 bg-muted/20 overflow-hidden flex items-center justify-center">
+      <div
+        className="relative w-full aspect-[4/3] bg-muted/20 overflow-hidden flex items-center justify-center cursor-zoom-in"
+        onClick={() => images.length > 0 && onImageClick?.(images[currentImageIndex])}
+      >
         {images.length > 0 ? (
           <motion.div
             key={currentImageIndex}
@@ -144,10 +157,9 @@ function MenuItemCard({
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-110"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              onError={() => {
-                // Handle image load error silently, let background show
-              }}
             />
+            {/* Overlay gradient for better text legibility if needed, but here it's for premium feel */}
+            <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity" />
           </motion.div>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-emerald/5 to-primary/5 text-emerald/20">
@@ -336,9 +348,17 @@ export function MenuPageContent({
   weeklyMenus,
 }: MenuPageContentProps) {
   const { state } = useCart();
+  const { isStaff } = useAuth();
   const [activeCategory, setActiveCategory] = useState<MenuCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [showFullMenu, setShowFullMenu] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [selectedFullImage, setSelectedFullImage] = useState<string | null>(null);
+
+  // New state for day selection: 'monday' | 'thursday'
+  const defaultDay = getNearestActiveDay(mondayActive, thursdayActive) || 'monday';
+  const [selectedView, setSelectedView] = useState<'monday' | 'thursday' | 'full'>(
+    defaultDay as 'monday' | 'thursday' | 'full'
+  );
 
   // Date Logic
   const nextMonday = getNextWeekday('Monday');
@@ -346,16 +366,16 @@ export function MenuPageContent({
   const nextMondayISO = getISOString(nextMonday);
   const nextThursdayISO = getISOString(nextThursday);
 
-  // Determine which day's menu to show by default
-  // Priority: if monday is active, show monday. Else if thursday is active, show thursday.
-  const activeDay = mondayActive ? 'monday' : (thursdayActive ? 'thursday' : null);
-  const activeDateISO = activeDay === 'monday' ? nextMondayISO : nextThursdayISO;
-  const activeDateFormatted = activeDay === 'monday' ? formatDate(nextMonday) : formatDate(nextThursday);
-
-  // Get items for the active day
-  const weeklyMenuItemIds = new Set(
+  // Get items for Monday and Thursday separately
+  const mondayItemIds = new Set(
     weeklyMenus
-      .filter(wm => wm.order_day === activeDay && wm.menu_date === activeDateISO)
+      .filter(wm => wm.order_day === 'monday' && wm.menu_date === nextMondayISO)
+      .map(wm => wm.menu_item_id)
+  );
+
+  const thursdayItemIds = new Set(
+    weeklyMenus
+      .filter(wm => wm.order_day === 'thursday' && wm.menu_date === nextThursdayISO)
       .map(wm => wm.menu_item_id)
   );
 
@@ -364,18 +384,25 @@ export function MenuPageContent({
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-    // If not showing full menu, only show items in the weekly menu for the active day
-    const isInWeekly = weeklyMenuItemIds.has(item.id);
-    const matchesVisibility = showFullMenu || isInWeekly;
+    // Strict day filtering for Monday and Thursday when NOT searching
+    // If searching, we show EVERYTHING so they can "demand" any product
+    let matchesVisibility = true;
+    if (searchQuery === '' && selectedView !== 'full') {
+      if (selectedView === 'monday') {
+        matchesVisibility = mondayItemIds.has(item.id);
+      } else if (selectedView === 'thursday') {
+        matchesVisibility = thursdayItemIds.has(item.id);
+      }
+    }
 
-    return matchesCategory && matchesSearch && (showFullMenu || matchesVisibility);
+    return matchesCategory && matchesSearch && matchesVisibility;
   });
 
-  // Items to actually display (if full menu is off, we only show items in weekly menu)
-  // If full menu is on, we show all, but some will have the "Request" button
   const displayItems = filteredItems;
 
-  const isItemInWeekly = (itemId: string) => weeklyMenuItemIds.has(itemId);
+  const isItemInWeekly = (itemId: string, day: 'monday' | 'thursday') => {
+    return day === 'monday' ? mondayItemIds.has(itemId) : thursdayItemIds.has(itemId);
+  };
 
   // Group items by category for the "all" view
   const categoriesToRender = categoryOrder.filter(cat =>
@@ -414,7 +441,7 @@ export function MenuPageContent({
             transition={{ duration: 0.5 }}
             className="max-w-2xl"
           >
-            <h1 className="mb-4">Tiffin Menu</h1>
+            <h1 className="mb-4 text-3xl font-bold">Tiffin Menu</h1>
             <p className="text-muted-foreground text-lg">
               Fresh, home-style Indian meals prepared with love. Order by Sunday noon for Monday delivery, or Wednesday noon for Thursday delivery.
             </p>
@@ -433,14 +460,14 @@ export function MenuPageContent({
               )}>
                 <Calendar className="h-5 w-5 text-emerald" />
                 <div>
-                  <div className="font-semibold">Monday Delivery</div>
-                  <div className="text-sm text-muted-foreground flex items-center gap-1">
+                  <div className="font-semibold text-sm md:text-base">Monday Delivery</div>
+                  <div className="text-xs md:text-sm text-muted-foreground flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     {mondayActive ? `Accepting for ${formatDate(nextMonday)}` : 'Closed'}
                   </div>
                 </div>
                 {mondayActive && (
-                  <span className="text-xs px-2 py-1 bg-emerald text-white rounded-full animate-pulse capitalize">
+                  <span className="text-[10px] px-2 py-1 bg-emerald text-white rounded-full animate-pulse capitalize">
                     Active
                   </span>
                 )}
@@ -451,40 +478,59 @@ export function MenuPageContent({
               )}>
                 <Calendar className="h-5 w-5 text-gold" />
                 <div>
-                  <div className="font-semibold">Thursday Delivery</div>
-                  <div className="text-sm text-muted-foreground flex items-center gap-1">
+                  <div className="font-semibold text-sm md:text-base">Thursday Delivery</div>
+                  <div className="text-xs md:text-sm text-muted-foreground flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     {thursdayActive ? `Accepting for ${formatDate(nextThursday)}` : 'Closed'}
                   </div>
                 </div>
                 {thursdayActive && (
-                  <span className="text-xs px-2 py-1 bg-gold text-white rounded-full animate-pulse capitalize">
+                  <span className="text-[10px] px-2 py-1 bg-gold text-white rounded-full animate-pulse capitalize">
                     Active
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Full Menu Toggle */}
-            <div className="flex items-center gap-3 p-1 bg-muted/50 rounded-full border">
-              <button
-                onClick={() => setShowFullMenu(false)}
-                className={cn(
-                  "px-6 py-2 rounded-full text-sm font-medium transition-all",
-                  !showFullMenu ? "bg-white shadow-sm text-emerald" : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                Current Menu
-              </button>
-              <button
-                onClick={() => setShowFullMenu(true)}
-                className={cn(
-                  "px-6 py-2 rounded-full text-sm font-medium transition-all",
-                  showFullMenu ? "bg-white shadow-sm text-emerald" : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                Full Menu
-              </button>
+            {/* Combined View Selector */}
+            <div className="flex flex-col items-center gap-4 w-full">
+              <div className="flex items-center gap-1 p-1 bg-muted/50 rounded-full border max-w-full overflow-x-auto no-scrollbar">
+                <button
+                  onClick={() => setSelectedView('monday')}
+                  disabled={!mondayActive}
+                  className={cn(
+                    "px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-medium transition-all whitespace-nowrap",
+                    selectedView === 'monday'
+                      ? "bg-white shadow-sm text-emerald ring-1 ring-emerald/10"
+                      : "text-muted-foreground hover:text-foreground disabled:opacity-30"
+                  )}
+                >
+                  Monday Menu
+                </button>
+                <button
+                  onClick={() => setSelectedView('thursday')}
+                  disabled={!thursdayActive}
+                  className={cn(
+                    "px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-medium transition-all whitespace-nowrap",
+                    selectedView === 'thursday'
+                      ? "bg-white shadow-sm text-emerald ring-1 ring-emerald/10"
+                      : "text-muted-foreground hover:text-foreground disabled:opacity-30"
+                  )}
+                >
+                  Thursday Menu
+                </button>
+              </div>
+
+              {selectedView !== 'full' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs text-muted-foreground flex items-center gap-1.5"
+                >
+                  <Clock className="h-3 w-3" />
+                  Showing items available for {selectedView === 'monday' ? formatDate(nextMonday) : formatDate(nextThursday)}
+                </motion.div>
+              )}
             </div>
           </div>
         </div>
@@ -523,18 +569,37 @@ export function MenuPageContent({
               ))}
             </div>
 
-            {/* Search Bar - More Compact */}
-            <div className="relative w-full lg:max-w-[280px] group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-emerald" />
-              </div>
-              <Input
-                type="text"
-                placeholder="Search menu..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-3 h-9 w-full bg-muted/20 border-border focus:border-emerald/50 focus:bg-background transition-all rounded-lg text-sm"
-              />
+            {/* Search Bar */}
+            <div className="flex items-center gap-2 w-full lg:w-auto justify-end">
+              <AnimatePresence>
+                {isSearchExpanded && (
+                  <motion.div
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: typeof window !== 'undefined' && window.innerWidth < 768 ? '100%' : 240, opacity: 1 }}
+                    exit={{ width: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <Input
+                      type="text"
+                      placeholder="Search items..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="h-9 w-full bg-muted/20 border-border focus:border-emerald/50 focus:bg-background transition-all rounded-lg text-sm"
+                      autoFocus
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <button
+                onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+                className={cn(
+                  "flex items-center justify-center h-9 w-9 min-w-[36px] rounded-lg border transition-all shadow-sm shrink-0",
+                  isSearchExpanded ? "bg-emerald text-white border-emerald" : "bg-white text-muted-foreground border-border hover:bg-muted"
+                )}
+                aria-label="Toggle search"
+              >
+                <Search className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </div>
@@ -544,7 +609,6 @@ export function MenuPageContent({
       <section className="py-8 min-h-[400px]">
         <div className="container-wide">
           {activeCategory === 'all' ? (
-            // Show all categories with headers
             categoriesToRender.map((category) => {
               const items = displayItems.filter(item => item.category === category);
               if (items.length === 0) return null;
@@ -568,7 +632,8 @@ export function MenuPageContent({
                       >
                         <MenuItemCard
                           item={item}
-                          isInWeeklyMenu={isItemInWeekly(item.id)}
+                          isInWeeklyMenu={selectedView === 'full' ? (isItemInWeekly(item.id, 'monday') || isItemInWeekly(item.id, 'thursday')) : (selectedView === 'monday' ? isItemInWeekly(item.id, 'monday') : isItemInWeekly(item.id, 'thursday'))}
+                          onImageClick={setSelectedFullImage}
                         />
                       </motion.div>
                     ))}
@@ -577,7 +642,6 @@ export function MenuPageContent({
               );
             })
           ) : (
-            // Show filtered category
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {displayItems.map((item, index) => (
                 <motion.div
@@ -588,7 +652,8 @@ export function MenuPageContent({
                 >
                   <MenuItemCard
                     item={item}
-                    isInWeeklyMenu={isItemInWeekly(item.id)}
+                    isInWeeklyMenu={selectedView === 'full' ? (isItemInWeekly(item.id, 'monday') || isItemInWeekly(item.id, 'thursday')) : (selectedView === 'monday' ? isItemInWeekly(item.id, 'monday') : isItemInWeekly(item.id, 'thursday'))}
+                    onImageClick={setSelectedFullImage}
                   />
                 </motion.div>
               ))}
@@ -602,21 +667,19 @@ export function MenuPageContent({
               </div>
               <h3 className="text-lg font-medium">No items found</h3>
               <p className="text-muted-foreground">Try adjusting your filters or search query.</p>
-              {showFullMenu && (
-                <Button
-                  variant="link"
-                  onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
-                  className="mt-2 text-emerald"
-                >
-                  Clear all filters
-                </Button>
-              )}
+              <Button
+                variant="link"
+                onClick={() => { setSearchQuery(''); setActiveCategory('all'); setSelectedView(defaultDay as any); }}
+                className="mt-2 text-emerald"
+              >
+                Clear all filters
+              </Button>
             </div>
           )}
         </div>
       </section>
 
-      {/* Floating Cart Summary */}
+      {/* Floating Cart Placeholder */}
       {state.itemCount > 0 && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
           <motion.div
@@ -666,6 +729,45 @@ export function MenuPageContent({
           </div>
         </section>
       )}
+
+      {/* Image Modal */}
+      <AnimatePresence>
+        {selectedFullImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-sm"
+            onClick={() => setSelectedFullImage(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-5xl w-full max-h-full aspect-auto bg-black rounded-lg overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setSelectedFullImage(null)}
+                className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors"
+                title="Close"
+              >
+                <X className="h-6 w-6" />
+              </button>
+
+              <div className="relative w-full h-[80vh] flex items-center justify-center">
+                <Image
+                  src={selectedFullImage}
+                  alt="Full preview"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

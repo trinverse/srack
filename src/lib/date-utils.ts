@@ -36,3 +36,14 @@ export function formatDate(date: Date) {
 export function getISOString(date: Date) {
     return date.toISOString().split('T')[0];
 }
+
+export function getNearestActiveDay(mondayActive: boolean, thursdayActive: boolean) {
+    if (!mondayActive && !thursdayActive) return null;
+    if (mondayActive && !thursdayActive) return 'monday';
+    if (!mondayActive && thursdayActive) return 'thursday';
+
+    const nextMonday = getNextWeekday('Monday');
+    const nextThursday = getNextWeekday('Thursday');
+
+    return nextMonday.getTime() <= nextThursday.getTime() ? 'monday' : 'thursday';
+}

@@ -33,14 +33,22 @@ const categoryLabels: Record<MenuCategory, string> = {
   dal_entrees: 'Dal Entrees',
   roties_rice: 'Roties & Rice',
   special_items: 'Special Items',
+  breakfast: 'Breakfast',
+  dessert: 'Dessert',
+  chutneys: 'Chutneys',
+  sides: 'Sides',
 };
 
 const categoryOrder: MenuCategory[] = [
+  'special_items',
   'veg_entrees',
   'non_veg_entrees',
   'dal_entrees',
   'roties_rice',
-  'special_items',
+  'breakfast',
+  'dessert',
+  'chutneys',
+  'sides',
 ];
 
 const dietaryTagOptions: DietaryTag[] = [
@@ -319,27 +327,47 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
       {/* Filters */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search menu items..."
-                className="w-full pl-10 pr-4 py-2 border rounded-lg"
-              />
+          <div className="space-y-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search menu items..."
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald/20 focus:border-emerald outline-none transition-all"
+                />
+              </div>
             </div>
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value as MenuCategory | 'all')}
-              className="px-4 py-2 border rounded-lg"
-            >
-              <option value="all">All Categories</option>
-              {categoryOrder.map((cat) => (
-                <option key={cat} value={cat}>{categoryLabels[cat]}</option>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setFilterCategory('all')}
+                className={cn(
+                  'px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all border shadow-sm',
+                  filterCategory === 'all'
+                    ? 'bg-emerald text-white border-emerald'
+                    : 'bg-background text-muted-foreground border-border hover:bg-muted'
+                )}
+              >
+                All Items
+              </button>
+              {categoryOrder.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setFilterCategory(category)}
+                  className={cn(
+                    'px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all border shadow-sm',
+                    filterCategory === category
+                      ? 'bg-emerald text-white border-emerald'
+                      : 'bg-background text-muted-foreground border-border hover:bg-muted'
+                  )}
+                >
+                  {categoryLabels[category]}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
         </CardContent>
       </Card>
