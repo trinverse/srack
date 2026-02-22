@@ -23,6 +23,7 @@ import { useCart } from '@/context/cart-context';
 import { useAuth } from '@/context/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { GooglePlacesAutocomplete, type ParsedAddress } from '@/components/google-places-autocomplete';
 import type { PickupLocation, CustomerAddress, OrderDay, OrderType } from '@/types/database';
 
 export default function CheckoutPage() {
@@ -49,15 +50,10 @@ export default function CheckoutPage() {
 
   // New address form
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<ParsedAddress | null>(null);
   const [newAddress, setNewAddress] = useState({
-    street_address: '',
     apartment_number: '',
-    building_name: '',
-    city: 'Atlanta',
-    state: 'GA',
-    zip_code: '',
     gate_code: '',
-    parking_instructions: '',
     delivery_notes: '',
   });
   const [zipError, setZipError] = useState('');
@@ -124,26 +120,30 @@ export default function CheckoutPage() {
     return !!data;
   };
 
-  const handleAddAddress = async () => {
+  const handlePlaceSelected = async (place: ParsedAddress) => {
     setZipError('');
-
-    if (!newAddress.zip_code || newAddress.zip_code.length !== 5) {
-      setZipError('Please enter a valid 5-digit ZIP code');
-      return;
-    }
-
-    const isValid = await validateZipCode(newAddress.zip_code);
+    const isValid = await validateZipCode(place.zip_code);
     if (!isValid) {
       setZipError('Sorry, we do not deliver to this ZIP code. Please choose pickup instead.');
+      setSelectedPlace(null);
       return;
     }
+    setSelectedPlace(place);
+  };
 
-    if (!customer) return;
+  const handleAddAddress = async () => {
+    if (!selectedPlace || !customer) return;
 
     const { data, error } = await supabase.from('customer_addresses').insert({
       customer_id: customer.id,
       address_type: 'shipping',
-      ...newAddress,
+      street_address: selectedPlace.street_address,
+      city: selectedPlace.city,
+      state: selectedPlace.state,
+      zip_code: selectedPlace.zip_code,
+      apartment_number: newAddress.apartment_number || null,
+      gate_code: newAddress.gate_code || null,
+      delivery_notes: newAddress.delivery_notes || null,
       is_default: addresses.length === 0,
     }).select().single();
 
@@ -156,17 +156,8 @@ export default function CheckoutPage() {
       setAddresses([...addresses, data]);
       setSelectedAddress(data.id);
       setShowNewAddressForm(false);
-      setNewAddress({
-        street_address: '',
-        apartment_number: '',
-        building_name: '',
-        city: 'Atlanta',
-        state: 'GA',
-        zip_code: '',
-        gate_code: '',
-        parking_instructions: '',
-        delivery_notes: '',
-      });
+      setSelectedPlace(null);
+      setNewAddress({ apartment_number: '', gate_code: '', delivery_notes: '' });
     }
   };
 
@@ -482,142 +473,76 @@ export default function CheckoutPage() {
                     {showNewAddressForm ? (
                       <div className="space-y-4 p-4 border rounded-lg">
                         <h4 className="font-medium">Add New Address</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-1">
-                              Street Address *
-                            </label>
-                            <input
-                              type="text"
-                              value={newAddress.street_address}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, street_address: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="123 Main St"
-                              required
-                            />
+
+                        <GooglePlacesAutocomplete
+                          onPlaceSelected={handlePlaceSelected}
+                          onClear={() => {
+                            setSelectedPlace(null);
+                            setZipError('');
+                          }}
+                        />
+
+                        {zipError && (
+                          <p className="text-sm text-destructive">{zipError}</p>
+                        )}
+
+                        {selectedPlace && (
+                          <div className="space-y-3 pt-3 border-t">
+                            <p className="text-sm text-emerald font-medium">
+                              ✓ {selectedPlace.formatted_address}
+                            </p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-sm font-medium mb-1">Apt/Unit #</label>
+                                <input
+                                  type="text"
+                                  value={newAddress.apartment_number}
+                                  onChange={(e) =>
+                                    setNewAddress({ ...newAddress, apartment_number: e.target.value })
+                                  }
+                                  className="w-full px-3 py-2 border rounded-lg"
+                                  placeholder="Apt 4B"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium mb-1">Gate Code</label>
+                                <input
+                                  type="text"
+                                  value={newAddress.gate_code}
+                                  onChange={(e) =>
+                                    setNewAddress({ ...newAddress, gate_code: e.target.value })
+                                  }
+                                  className="w-full px-3 py-2 border rounded-lg"
+                                  placeholder="#1234"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium mb-1">Delivery Notes</label>
+                              <textarea
+                                value={newAddress.delivery_notes}
+                                onChange={(e) =>
+                                  setNewAddress({ ...newAddress, delivery_notes: e.target.value })
+                                }
+                                className="w-full px-3 py-2 border rounded-lg"
+                                rows={2}
+                                placeholder="Gate code, parking info, leave with concierge, etc."
+                              />
+                            </div>
                           </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">
-                              Apt/Unit #
-                            </label>
-                            <input
-                              type="text"
-                              value={newAddress.apartment_number}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, apartment_number: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="Apt 4B"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">
-                              Building Name
-                            </label>
-                            <input
-                              type="text"
-                              value={newAddress.building_name}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, building_name: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="The Heights"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">City *</label>
-                            <input
-                              type="text"
-                              value={newAddress.city}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, city: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">State</label>
-                            <input
-                              type="text"
-                              value={newAddress.state}
-                              className="w-full px-3 py-2 border rounded-lg bg-muted"
-                              disabled
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">ZIP Code *</label>
-                            <input
-                              type="text"
-                              value={newAddress.zip_code}
-                              onChange={(e) =>
-                                setNewAddress({
-                                  ...newAddress,
-                                  zip_code: e.target.value.replace(/\D/g, '').slice(0, 5),
-                                })
-                              }
-                              className={cn(
-                                'w-full px-3 py-2 border rounded-lg',
-                                zipError && 'border-destructive'
-                              )}
-                              placeholder="30303"
-                              required
-                            />
-                            {zipError && (
-                              <p className="text-sm text-destructive mt-1">{zipError}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">Gate Code</label>
-                            <input
-                              type="text"
-                              value={newAddress.gate_code}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, gate_code: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="#1234"
-                            />
-                          </div>
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-1">
-                              Parking Instructions
-                            </label>
-                            <input
-                              type="text"
-                              value={newAddress.parking_instructions}
-                              onChange={(e) =>
-                                setNewAddress({
-                                  ...newAddress,
-                                  parking_instructions: e.target.value,
-                                })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="Park in visitor lot"
-                            />
-                          </div>
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-1">
-                              Delivery Notes
-                            </label>
-                            <textarea
-                              value={newAddress.delivery_notes}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, delivery_notes: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              rows={2}
-                              placeholder="Leave with concierge, ring doorbell, etc."
-                            />
-                          </div>
-                        </div>
+                        )}
+
                         <div className="flex gap-2">
-                          <Button onClick={handleAddAddress}>Save Address</Button>
+                          <Button onClick={handleAddAddress} disabled={!selectedPlace}>
+                            Save Address
+                          </Button>
                           <Button
                             variant="outline"
-                            onClick={() => setShowNewAddressForm(false)}
+                            onClick={() => {
+                              setShowNewAddressForm(false);
+                              setSelectedPlace(null);
+                              setZipError('');
+                            }}
                           >
                             Cancel
                           </Button>
