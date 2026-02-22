@@ -69,7 +69,7 @@ export default function CheckoutPage() {
 
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, authLoading, router]);
+  }, [user, customer, authLoading, router]);
 
   const loadData = async () => {
     setIsLoading(true);
