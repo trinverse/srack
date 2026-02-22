@@ -33,19 +33,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    const fetchCustomerData = async (authUserId: string) => {
+    const fetchCustomerData = async (authUser: User) => {
       try {
         const { data, error } = await supabase
           .from('customers')
           .select('*')
-          .eq('auth_user_id', authUserId)
+          .eq('auth_user_id', authUser.id)
           .single();
 
         if (error && error.code !== 'PGRST116') {
           log.error('Error fetching customer:', error);
         }
 
-        if (mounted) setCustomer(data);
+        if (data) {
+          if (mounted) setCustomer(data);
+          return;
+        }
+
+        // No customer record — auto-create via signup API
+        log.info('No customer record found, auto-creating...');
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            authUserId: authUser.id,
+            email: authUser.email,
+            fullName: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Customer',
+            phone: authUser.user_metadata?.phone || authUser.phone || '',
+          }),
+        });
+
+        if (res.ok) {
+          // Re-fetch the newly created customer
+          const { data: newCustomer } = await supabase
+            .from('customers')
+            .select('*')
+            .eq('auth_user_id', authUser.id)
+            .single();
+
+          if (mounted) setCustomer(newCustomer);
+        } else {
+          log.error('Failed to auto-create customer:', await res.text());
+        }
       } catch (error) {
         log.error('Caught error fetching customer:', error);
       }
@@ -66,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Fetch customer data in the background — must NOT be awaited
       // inside onAuthStateChange to avoid blocking Supabase's internal lock
       if (newSession?.user) {
-        fetchCustomerData(newSession.user.id);
+        fetchCustomerData(newSession.user);
       } else {
         setCustomer(null);
       }
