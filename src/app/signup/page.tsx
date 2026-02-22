@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, Phone, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { Mail, Lock, User, Phone, Loader2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useAuth } from '@/context/auth-context';
 
-export default function SignupPage() {
-  useRouter();
+function SignupForm() {
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/menu';
   const { signUp } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -23,7 +24,6 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
 
   const updateField = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -72,38 +72,10 @@ export default function SignupPage() {
       setError(error.message);
       setIsLoading(false);
     } else {
-      setSuccess(true);
+      // Account created and auto-signed in — full page reload to sync server cookies
+      window.location.href = redirectTo;
     }
   };
-
-  if (success) {
-    return (
-      <div className="pt-20 min-h-screen flex items-center justify-center py-12 px-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md"
-        >
-          <Card>
-            <CardContent className="pt-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald/10 mb-6">
-                <CheckCircle className="w-8 h-8 text-emerald" />
-              </div>
-              <h2 className="text-2xl font-bold mb-2">Check Your Email</h2>
-              <p className="text-muted-foreground mb-6">
-                We&apos;ve sent a confirmation link to <strong>{formData.email}</strong>.
-                Please check your inbox and click the link to verify your account.
-              </p>
-              <Button asChild>
-                <Link href="/login">Go to Sign In</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="pt-20 min-h-screen flex items-center justify-center py-12 px-4">
@@ -253,5 +225,13 @@ export default function SignupPage() {
         </Card>
       </motion.div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="pt-20 min-h-screen flex items-center justify-center"><div className="animate-pulse">Loading...</div></div>}>
+      <SignupForm />
+    </Suspense>
   );
 }

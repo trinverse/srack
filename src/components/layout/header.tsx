@@ -15,7 +15,7 @@ import { useCart } from '@/context/cart-context';
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { customer, isLoading, signOut, isStaff } = useAuth();
+  const { user, customer, isLoading, signOut, isStaff } = useAuth();
   const { state: cartState } = useCart();
   const router = useRouter();
   const pathname = usePathname();
@@ -108,15 +108,17 @@ export function Header() {
             {/* Auth */}
             {!isLoading && (
               <>
-                {customer ? (
+                {(customer || user) ? (
                   <div className="flex items-center gap-2">
                     <Button asChild variant="ghost" size="sm">
                       <Link href="/account" className="flex items-center gap-2">
                         <User className="h-4 w-4" />
-                        <span className="hidden lg:inline">{customer.full_name?.split(' ')[0] || 'Account'}</span>
+                        <span className="hidden lg:inline">
+                          {customer?.full_name?.split(' ')[0] || user?.user_metadata?.full_name?.split(' ')[0] || 'Account'}
+                        </span>
                       </Link>
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={handleSignOut}>
+                    <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sign out">
                       <LogOut className="h-4 w-4" />
                     </Button>
                   </div>
@@ -176,8 +178,11 @@ export function Header() {
                   <div className="pt-4 border-t">
                     {!isLoading && (
                       <>
-                        {customer ? (
+                        {(customer || user) ? (
                           <div className="space-y-2">
+                            <p className="text-sm text-muted-foreground px-1">
+                              Signed in as {customer?.full_name || user?.user_metadata?.full_name || user?.email}
+                            </p>
                             {isStaff && (
                               <Link
                                 href="/admin"

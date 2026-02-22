@@ -68,15 +68,17 @@ const dietaryTagLabels: Record<string, { label: string; color: string }> = {
 function MenuItemCard({
   item,
   isInWeeklyMenu = true,
+  orderDay,
   onRequested,
   onImageClick
 }: {
   item: MenuItem;
   isInWeeklyMenu?: boolean;
+  orderDay?: 'monday' | 'thursday';
   onRequested?: () => void;
   onImageClick?: (url: string) => void;
 }) {
-  const { addItem } = useCart();
+  const { addItem, setOrderDay } = useCart();
   const supabase = createClient();
   const [selectedSize, setSelectedSize] = useState<'8oz' | '16oz'>('8oz');
   const [quantity, setQuantity] = useState(1);
@@ -96,6 +98,7 @@ function MenuItemCard({
 
   const handleAddToCart = () => {
     addItem(item, item.has_size_options ? selectedSize : null, quantity);
+    if (orderDay) setOrderDay(orderDay);
     setQuantity(1);
   };
 
@@ -633,6 +636,7 @@ export function MenuPageContent({
                         <MenuItemCard
                           item={item}
                           isInWeeklyMenu={selectedView === 'full' ? (isItemInWeekly(item.id, 'monday') || isItemInWeekly(item.id, 'thursday')) : (selectedView === 'monday' ? isItemInWeekly(item.id, 'monday') : isItemInWeekly(item.id, 'thursday'))}
+                          orderDay={selectedView !== 'full' ? selectedView : undefined}
                           onImageClick={setSelectedFullImage}
                         />
                       </motion.div>

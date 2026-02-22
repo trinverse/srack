@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
 import type { User, Session } from '@supabase/supabase-js';
@@ -28,57 +28,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const lastFetchedUserId = useRef<string | null>(null);
-
   const supabase = createClient();
 
   useEffect(() => {
-    // Listen for auth changes
+    let mounted = true;
+
+    const fetchCustomerData = async (authUserId: string) => {
+      try {
+        const { data, error } = await supabase
+          .from('customers')
+          .select('*')
+          .eq('auth_user_id', authUserId)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          log.error('Error fetching customer:', error);
+        }
+
+        if (mounted) setCustomer(data);
+      } catch (error) {
+        log.error('Caught error fetching customer:', error);
+      }
+    };
+
+    // Use onAuthStateChange for both initial session and subsequent changes.
+    // Do NOT call getSession()/getUser() separately — they deadlock with
+    // onAuthStateChange's internal lock in @supabase/supabase-js v2.
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
+      if (!mounted) return;
 
-      if (session?.user) {
-        // Only fetch if we haven't fetched for this user yet
-        if (lastFetchedUserId.current !== session.user.id) {
-          lastFetchedUserId.current = session.user.id;
-          await fetchCustomer(session.user.id);
-        }
+      setSession(newSession);
+      setUser(newSession?.user ?? null);
+      setIsLoading(false);
+
+      // Fetch customer data in the background — must NOT be awaited
+      // inside onAuthStateChange to avoid blocking Supabase's internal lock
+      if (newSession?.user) {
+        fetchCustomerData(newSession.user.id);
       } else {
-        lastFetchedUserId.current = null;
         setCustomer(null);
-        setIsLoading(false);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const fetchCustomer = async (authUserId: string) => {
-    log.info('Fetching customer for auth_user_id:', authUserId);
-    try {
-      const { data, error, status } = await supabase
-        .from('customers')
-        .select('*')
-        .eq('auth_user_id', authUserId)
-        .single();
-
-      log.debug('Customer fetch result:', { data, error, status });
-
-      if (error && error.code !== 'PGRST116') {
-        log.error('Error fetching customer:', error);
-      }
-
-      setCustomer(data);
-    } catch (error) {
-      log.error('Caught error fetching customer:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const signUp = async (email: string, password: string, fullName: string, phone: string) => {
     try {
@@ -95,22 +94,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (authError) {
+        // Friendly messages for common errors
+        if (authError.message?.includes('already registered')) {
+          return { error: new Error('An account with this email already exists. Please sign in instead.') };
+        }
         return { error: authError };
       }
 
-      // Create customer record
-      if (authData.user) {
-        const { error: customerError } = await supabase.from('customers').insert({
-          auth_user_id: authData.user.id,
+      // Supabase returns a fake user with empty identities when the email is already taken
+      // (to prevent email enumeration). Detect this and try to sign in instead.
+      if (authData.user && (!authData.user.identities || authData.user.identities.length === 0)) {
+        // Account already exists — try signing in with the provided password
+        const { error: existingSignInError } = await supabase.auth.signInWithPassword({
           email,
-          full_name: fullName,
-          phone,
-          role: 'customer',
+          password,
         });
 
-        if (customerError) {
-          console.error('Error creating customer:', customerError);
-          return { error: new Error('Failed to create customer profile') };
+        if (existingSignInError) {
+          return { error: new Error('An account with this email already exists. Please sign in instead.') };
+        }
+
+        // Signed in successfully — fetch customer will happen via onAuthStateChange
+        return { error: null };
+      }
+
+      // New user created — set up customer record + auto-confirm email
+      if (authData.user) {
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            authUserId: authData.user.id,
+            email,
+            fullName,
+            phone,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          console.error('Error creating customer profile:', data);
+          // Don't show a cryptic error — the auth account was created, try signing in
+          const { error: fallbackSignInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (!fallbackSignInError) {
+            return { error: null };
+          }
+          return { error: new Error('Account created but we had trouble setting up your profile. Please try signing in.') };
+        }
+
+        // Auto-sign in since email is now auto-confirmed
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (signInError) {
+          console.warn('Auto sign-in after signup failed:', signInError.message);
         }
       }
 

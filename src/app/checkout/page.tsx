@@ -11,6 +11,7 @@ import {
   Calendar,
   Gift,
   CreditCard,
+  Banknote,
   AlertCircle,
   Loader2,
   ArrowLeft,
@@ -26,12 +27,12 @@ import type { PickupLocation, CustomerAddress, OrderDay, OrderType } from '@/typ
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { state, clearCart, setOrderDay } = useCart();
-  const { user, customer } = useAuth();
+  const { state, clearCart } = useCart();
+  const { user, customer, isLoading: authLoading } = useAuth();
   const supabase = createClient();
 
+  const orderDay = state.orderDay || 'monday';
   const [orderType, setOrderType] = useState<OrderType>('delivery');
-  const [orderDay, setOrderDayState] = useState<OrderDay>('monday');
   const [pickupLocations, setPickupLocations] = useState<PickupLocation[]>([]);
   const [selectedPickupLocation, setSelectedPickupLocation] = useState<string>('');
   const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
@@ -40,6 +41,7 @@ export default function CheckoutPage() {
   const [giftDetails, setGiftDetails] = useState({ name: '', phone: '', notes: '' });
   const [discountCode, setDiscountCode] = useState('');
   const [discountApplied, setDiscountApplied] = useState<{ amount: number; code: string } | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'online'>('cash');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,6 +63,9 @@ export default function CheckoutPage() {
   const [zipError, setZipError] = useState('');
 
   useEffect(() => {
+    // Wait for auth to finish loading before checking user
+    if (authLoading) return;
+
     if (!user) {
       router.push('/login?redirect=/checkout');
       return;
@@ -68,40 +73,44 @@ export default function CheckoutPage() {
 
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, router]);
+  }, [user, authLoading, router]);
 
   const loadData = async () => {
     setIsLoading(true);
 
-    // Load pickup locations
-    const { data: locations } = await supabase
-      .from('pickup_locations')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order');
-
-    if (locations) {
-      setPickupLocations(locations);
-    }
-
-    // Load customer addresses
-    if (customer) {
-      const { data: addrs } = await supabase
-        .from('customer_addresses')
+    try {
+      // Load pickup locations
+      const { data: locations } = await supabase
+        .from('pickup_locations')
         .select('*')
-        .eq('customer_id', customer.id)
-        .eq('address_type', 'shipping');
+        .eq('is_active', true)
+        .order('sort_order');
 
-      if (addrs) {
-        setAddresses(addrs);
-        const defaultAddr = addrs.find((a) => a.is_default);
-        if (defaultAddr) {
-          setSelectedAddress(defaultAddr.id);
+      if (locations) {
+        setPickupLocations(locations);
+      }
+
+      // Load customer addresses
+      if (customer) {
+        const { data: addrs } = await supabase
+          .from('customer_addresses')
+          .select('*')
+          .eq('customer_id', customer.id)
+          .eq('address_type', 'shipping');
+
+        if (addrs) {
+          setAddresses(addrs);
+          const defaultAddr = addrs.find((a) => a.is_default);
+          if (defaultAddr) {
+            setSelectedAddress(defaultAddr.id);
+          }
         }
       }
+    } catch (err) {
+      console.error('Failed to load checkout data:', err);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const validateZipCode = async (zip: string) => {
@@ -240,7 +249,7 @@ export default function CheckoutPage() {
           agreed_to_terms: agreedToTerms,
           agreed_to_delivery_terms: orderType === 'delivery' ? agreedToTerms : null,
           agreed_to_pickup_terms: orderType === 'pickup' ? agreedToTerms : null,
-          payment_status: 'pending',
+          payment_status: paymentMethod === 'cash' ? 'cash_on_delivery' : 'pending',
         })
         .select()
         .single();
@@ -262,6 +271,16 @@ export default function CheckoutPage() {
 
       if (itemsError) throw itemsError;
 
+      // Send order confirmation notification (email + SMS)
+      // Fire-and-forget — don't block the redirect on notification delivery
+      fetch('/api/notifications/order-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: order.id }),
+      }).catch((notifErr) => {
+        console.error('Failed to send order confirmation notification:', notifErr);
+      });
+
       // Clear cart and redirect to success
       clearCart();
       router.push(`/orders/${order.id}/confirmation`);
@@ -281,7 +300,7 @@ export default function CheckoutPage() {
     return nextDate.toISOString().split('T')[0];
   };
 
-  if (!user || state.isLoading || isLoading) {
+  if (authLoading || !user || state.isLoading || isLoading) {
     return (
       <div className="pt-20 min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-emerald" />
@@ -338,46 +357,15 @@ export default function CheckoutPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Order Day Selection */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() => {
-                        setOrderDayState('monday');
-                        setOrderDay('monday');
-                      }}
-                      className={cn(
-                        'p-4 rounded-lg border-2 text-left transition-colors',
-                        orderDay === 'monday'
-                          ? 'border-emerald bg-emerald/5'
-                          : 'border-border hover:border-emerald/50'
-                      )}
-                    >
-                      <Calendar className="h-5 w-5 mb-2 text-emerald" />
-                      <div className="font-semibold">Monday</div>
-                      <div className="text-sm text-muted-foreground flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        Order by Sun 12 PM
-                      </div>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setOrderDayState('thursday');
-                        setOrderDay('thursday');
-                      }}
-                      className={cn(
-                        'p-4 rounded-lg border-2 text-left transition-colors',
-                        orderDay === 'thursday'
-                          ? 'border-gold bg-gold/5'
-                          : 'border-border hover:border-gold/50'
-                      )}
-                    >
-                      <Calendar className="h-5 w-5 mb-2 text-gold" />
-                      <div className="font-semibold">Thursday</div>
-                      <div className="text-sm text-muted-foreground flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        Order by Wed 12 PM
-                      </div>
-                    </button>
+                  {/* Delivery day info - auto-determined from menu items */}
+                  <div className="p-3 bg-emerald/5 border border-emerald/20 rounded-lg flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-emerald" />
+                    <span className="text-sm font-medium">
+                      {orderDay === 'monday' ? 'Monday' : 'Thursday'} Delivery
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      &mdash; Order by {orderDay === 'monday' ? 'Sun' : 'Wed'} 12 PM
+                    </span>
                   </div>
 
                   {/* Delivery vs Pickup */}
@@ -715,6 +703,59 @@ export default function CheckoutPage() {
                 </CardContent>
               </Card>
 
+              {/* Payment Method */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald text-white text-sm">
+                      {orderType === 'delivery' ? '3' : '2'}
+                    </span>
+                    Payment Method
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      onClick={() => setPaymentMethod('cash')}
+                      className={cn(
+                        'p-4 rounded-lg border-2 text-left transition-colors',
+                        paymentMethod === 'cash'
+                          ? 'border-emerald bg-emerald/5'
+                          : 'border-border hover:border-emerald/50'
+                      )}
+                    >
+                      <Banknote className="h-5 w-5 mb-2 text-emerald" />
+                      <div className="font-semibold">Cash on Delivery</div>
+                      <div className="text-sm text-muted-foreground">
+                        Pay when you receive your order
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => setPaymentMethod('online')}
+                      className={cn(
+                        'p-4 rounded-lg border-2 text-left transition-colors',
+                        paymentMethod === 'online'
+                          ? 'border-emerald bg-emerald/5'
+                          : 'border-border hover:border-emerald/50'
+                      )}
+                    >
+                      <CreditCard className="h-5 w-5 mb-2 text-emerald" />
+                      <div className="font-semibold">Pay Online</div>
+                      <div className="text-sm text-muted-foreground">
+                        Coming soon
+                      </div>
+                    </button>
+                  </div>
+                  {paymentMethod === 'cash' && (
+                    <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <p className="text-sm text-amber-800">
+                        Please have the exact amount ready at the time of {orderType === 'delivery' ? 'delivery' : 'pickup'}. Total: <strong>${total.toFixed(2)}</strong>
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               {/* Terms Agreement */}
               <Card>
                 <CardContent className="pt-6">
@@ -831,14 +872,20 @@ export default function CheckoutPage() {
                       </>
                     ) : (
                       <>
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        Place Order
+                        {paymentMethod === 'cash' ? (
+                          <Banknote className="mr-2 h-4 w-4" />
+                        ) : (
+                          <CreditCard className="mr-2 h-4 w-4" />
+                        )}
+                        Place Order{paymentMethod === 'cash' ? ' — Cash on Delivery' : ''}
                       </>
                     )}
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground">
-                    Payment will be collected upon confirmation
+                    {paymentMethod === 'cash'
+                      ? 'Pay with cash when your order arrives'
+                      : 'Payment will be collected upon confirmation'}
                   </p>
                 </CardContent>
               </Card>
