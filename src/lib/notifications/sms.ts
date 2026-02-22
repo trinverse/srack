@@ -1,10 +1,26 @@
 import twilio from 'twilio';
 
-// Initialize Twilio client - will be undefined if env vars not set (safe for build)
-const twilioClient =
-  process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN
-    ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
-    : null;
+// Lazy-initialize Twilio client to avoid crashing the module on invalid credentials
+let twilioClient: ReturnType<typeof twilio> | null = null;
+let twilioInitAttempted = false;
+
+function getTwilioClient() {
+  if (twilioInitAttempted) return twilioClient;
+  twilioInitAttempted = true;
+
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+
+  if (!sid || !token) return null;
+
+  try {
+    twilioClient = twilio(sid, token);
+  } catch (err) {
+    console.error('[SMS] Failed to initialize Twilio client:', err instanceof Error ? err.message : err);
+  }
+
+  return twilioClient;
+}
 
 const FROM_PHONE = process.env.TWILIO_PHONE_NUMBER || '';
 
@@ -45,8 +61,9 @@ function formatPhoneNumber(phone: string): string {
  * Returns { success, messageSid } or { success: false, error }
  */
 export async function sendSms(payload: SmsPayload): Promise<{ success: boolean; messageSid?: string; error?: string }> {
-  if (!twilioClient) {
-    console.warn('[SMS] Twilio not configured — missing TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN. SMS not sent.');
+  const client = getTwilioClient();
+  if (!client) {
+    console.warn('[SMS] Twilio not configured — missing or invalid credentials. SMS not sent.');
     return { success: false, error: 'SMS service not configured' };
   }
 
@@ -56,7 +73,7 @@ export async function sendSms(payload: SmsPayload): Promise<{ success: boolean; 
   }
 
   try {
-    const message = await twilioClient.messages.create({
+    const message = await client.messages.create({
       body: payload.body,
       from: FROM_PHONE,
       to: formatPhoneNumber(payload.to),
