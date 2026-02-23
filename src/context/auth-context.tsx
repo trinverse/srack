@@ -13,8 +13,9 @@ interface AuthContextType {
   session: Session | null;
   customer: Customer | null;
   isLoading: boolean;
-  signUp: (email: string, password: string, fullName: string, phone: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, fullName: string, phone: string, smsOptIn?: boolean) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signInWithGoogle: (redirectTo?: string) => Promise<void>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
   isStaff: boolean;
@@ -108,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string, phone: string) => {
+  const signUp = async (email: string, password: string, fullName: string, phone: string, smsOptIn = false) => {
     try {
       // Create auth user
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -157,6 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             email,
             fullName,
             phone,
+            smsOptIn,
           }),
         });
 
@@ -208,6 +210,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signInWithGoogle = async (redirectTo?: string) => {
+    const callbackUrl = new URL('/auth/callback', window.location.origin);
+    if (redirectTo) {
+      callbackUrl.searchParams.set('next', redirectTo);
+    }
+
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: callbackUrl.toString(),
+      },
+    });
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -227,6 +243,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         signUp,
         signIn,
+        signInWithGoogle,
         signOut,
         isAdmin,
         isStaff,

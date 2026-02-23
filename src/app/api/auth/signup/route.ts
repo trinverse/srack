@@ -7,15 +7,15 @@ import type { Database } from '@/types/database';
  * Creates a customer record using the service role key (bypasses RLS).
  * Also auto-confirms the user's email so they can sign in immediately.
  *
- * Body: { authUserId: string, email: string, fullName: string, phone: string }
+ * Body: { authUserId: string, email: string, fullName: string, phone: string, smsOptIn?: boolean }
  */
 export async function POST(request: NextRequest) {
   try {
-    const { authUserId, email, fullName, phone } = await request.json();
+    const { authUserId, email, fullName, phone, smsOptIn } = await request.json();
 
-    if (!authUserId || !email || !fullName || !phone) {
+    if (!authUserId || !email || !fullName) {
       return NextResponse.json(
-        { error: 'authUserId, email, fullName, and phone are required' },
+        { error: 'authUserId, email, and fullName are required' },
         { status: 400 }
       );
     }
@@ -79,10 +79,10 @@ export async function POST(request: NextRequest) {
         auth_user_id: authUserId,
         email,
         full_name: fullName,
-        phone,
+        phone: phone || '',
         role: 'customer',
         email_opt_in: true,
-        sms_opt_in: true,
+        sms_opt_in: smsOptIn === true,
       })
       .select('id')
       .single();
