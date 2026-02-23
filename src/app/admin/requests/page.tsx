@@ -25,6 +25,7 @@ export default function AdminRequestsPage() {
     const [loading, setLoading] = useState(true);
     const [filterStatus, setFilterStatus] = useState<string>('all');
     const [searchQuery, setSearchQuery] = useState('');
+    const [adminError, setAdminError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchRequests();
@@ -48,16 +49,21 @@ export default function AdminRequestsPage() {
     };
 
     const updateStatus = async (id: string, status: string) => {
+        setAdminError(null);
         try {
             const { error } = await supabase
                 .from('menu_requests' as any)
                 .update({ status })
                 .eq('id', id);
 
-            if (error) throw error;
+            if (error) {
+                setAdminError(`Failed to update status: ${error.message}`);
+                return;
+            }
             setRequests(requests.map(r => r.id === id ? { ...r, status } : r));
         } catch (err) {
             console.error('Error updating status:', err);
+            setAdminError('An unexpected error occurred while updating status');
         }
     };
 
@@ -80,6 +86,14 @@ export default function AdminRequestsPage() {
                     Refresh
                 </Button>
             </div>
+
+            {/* Admin Error Banner */}
+            {adminError && (
+                <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm flex items-center justify-between">
+                    <span>⚠️ {adminError}</span>
+                    <button onClick={() => setAdminError(null)} className="ml-4 font-bold hover:underline">✕</button>
+                </div>
+            )}
 
             <Card>
                 <CardContent className="pt-6">
@@ -202,10 +216,15 @@ export default function AdminRequestsPage() {
                                         )}
                                         <Button
                                             size="sm"
-                                            onClick={() => {
+                                            onClick={async () => {
                                                 if (confirm('Are you sure you want to delete this request?')) {
-                                                    supabase.from('menu_requests' as any).delete().eq('id', request.id)
-                                                        .then(() => setRequests(requests.filter(r => r.id !== request.id)));
+                                                    setAdminError(null);
+                                                    const { error } = await supabase.from('menu_requests' as any).delete().eq('id', request.id);
+                                                    if (error) {
+                                                        setAdminError(`Failed to delete request: ${error.message}`);
+                                                    } else {
+                                                        setRequests(requests.filter(r => r.id !== request.id));
+                                                    }
                                                 }
                                             }}
                                             variant="ghost"
