@@ -39,11 +39,12 @@ The entire data model is defined in `src/types/database.ts` (auto-generated from
 
 ### Authentication Flow
 
-Authentication uses Supabase Auth with a dual-record system:
+Authentication uses Supabase Auth (email/password + Google OAuth) with a dual-record system:
 1. Supabase Auth creates `auth_user_id` (handled by Supabase)
 2. Customer record in `customers` table references `auth_user_id`
 3. `AuthContext` (`src/context/auth-context.tsx`) manages both user and customer state
-4. Middleware (`src/middleware.ts`) protects routes:
+4. OAuth callback handled at `src/app/auth/callback/route.ts`
+5. Middleware (`src/middleware.ts`) protects routes:
    - `/account`, `/checkout`, `/orders` require authentication
    - `/admin` requires admin/kitchen/marketing role
 
@@ -61,6 +62,7 @@ Cart state is managed in `CartContext` (`src/context/cart-context.tsx`):
 - `src/components/layout/` - Header, Footer with navigation
 - `src/components/sections/` - Landing page sections (Hero, Features, Testimonials, etc.)
 - `src/components/` - Feature components (EmailPopup, OrderDeadlineBanner, DeliveryZoneChecker)
+- `src/components/google-places-autocomplete.tsx` - Reusable address input with Google Places API
 
 ### Data Layer
 
@@ -77,6 +79,7 @@ Dynamic content fetched from Supabase:
 Required environment variables (from Supabase integration):
 - `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous/public key
+- `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` - Google Maps/Places API key (used in address autocomplete)
 
 These are used in:
 - `src/lib/supabase/client.ts` - Browser client
@@ -95,7 +98,7 @@ Three client patterns based on context:
 ### Database Schema
 
 Key tables (see `src/types/database.ts` for full schema):
-- `customers` - User profiles with role-based access (admin, kitchen, marketing, customer)
+- `customers` - User profiles with role-based access. `phone` column is NOT NULL but accepts empty string (for OAuth signups where phone isn't available)
 - `menu_items` - Master menu with categories, dietary tags, sizing options, pricing
 - `weekly_menus` - Weekly menu availability by order_day (monday/thursday)
 - `orders` - Orders with delivery/pickup details, payment status, order lifecycle
