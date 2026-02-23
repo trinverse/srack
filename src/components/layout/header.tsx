@@ -113,9 +113,11 @@ export function Header() {
                     <Button asChild variant="ghost" size="sm">
                       <Link href="/account" className="flex items-center gap-2">
                         <User className="h-4 w-4" />
-                        <span className="hidden lg:inline">
-                          {customer?.full_name?.split(' ')[0] || user?.user_metadata?.full_name?.split(' ')[0] || 'Account'}
-                        </span>
+                        {!isStaff && (
+                          <span className="hidden lg:inline">
+                            {customer?.full_name?.split(' ')[0] || user?.user_metadata?.full_name?.split(' ')[0] || 'Account'}
+                          </span>
+                        )}
                       </Link>
                     </Button>
                     <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sign out">

@@ -213,7 +213,7 @@ export default async function OrderConfirmationPage({ params }: Props) {
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/account/orders">View All Orders</Link>
+              <Link href="/account">View All Orders</Link>
             </Button>
           </div>
 
