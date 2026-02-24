@@ -197,99 +197,54 @@ export default function CheckoutPage() {
     setError('');
 
     try {
-      // Get the selected address
-      const address = addresses.find((a) => a.id === selectedAddress);
-
-      // Generate order number
-      const orderNumber = `SR-${Date.now().toString(36).toUpperCase()}`;
-
-      // Calculate totals
-      const taxRate = 0.08;
-      const tax = state.subtotal * taxRate;
-      const discountAmount = discountApplied?.amount || 0;
-      const total = state.subtotal + tax - discountAmount;
-
-      // Create order
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          order_number: orderNumber,
-          customer_id: customer.id,
+      // Call the secure server-side API route (validates prices, enforces minimums, etc.)
+      const res = await fetch('/api/place-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: state.items.map((item) => ({
+            menu_item_id: item.menuItem.id,
+            size: item.size,
+            quantity: item.quantity,
+          })),
           order_type: orderType,
           order_day: orderDay,
-          order_date: getNextOrderDate(orderDay),
-          status: 'pending',
-          shipping_street_address: address?.street_address,
-          shipping_apartment: address?.apartment_number,
-          shipping_building_name: address?.building_name,
-          shipping_city: address?.city,
-          shipping_state: address?.state,
-          shipping_zip_code: address?.zip_code,
-          shipping_gate_code: address?.gate_code,
-          shipping_parking_instructions: address?.parking_instructions,
-          shipping_delivery_notes: address?.delivery_notes,
-          pickup_location_id: orderType === 'pickup' ? selectedPickupLocation : null,
+          address_id: orderType === 'delivery' ? selectedAddress : undefined,
+          pickup_location_id: orderType === 'pickup' ? selectedPickupLocation : undefined,
           is_gift: isGift,
-          recipient_name: isGift ? giftDetails.name : null,
-          recipient_phone: isGift ? giftDetails.phone : null,
-          recipient_notes: isGift ? giftDetails.notes : null,
-          subtotal: state.subtotal,
-          tax,
-          discount_amount: discountAmount,
-          total,
+          recipient_name: isGift ? giftDetails.name : undefined,
+          recipient_phone: isGift ? giftDetails.phone : undefined,
+          recipient_notes: isGift ? giftDetails.notes : undefined,
+          discount_code: discountApplied?.code || undefined,
           agreed_to_terms: agreedToTerms,
-          agreed_to_delivery_terms: orderType === 'delivery' ? agreedToTerms : null,
-          agreed_to_pickup_terms: orderType === 'pickup' ? agreedToTerms : null,
-          payment_status: paymentMethod === 'cash' ? 'cash_on_delivery' : 'pending',
-        })
-        .select()
-        .single();
+        }),
+      });
 
-      if (orderError) throw orderError;
+      const result = await res.json();
 
-      // Create order items
-      const orderItems = state.items.map((item) => ({
-        order_id: order.id,
-        menu_item_id: item.menuItem.id,
-        item_name: item.menuItem.name,
-        size: item.size,
-        quantity: item.quantity,
-        unit_price: item.unitPrice,
-        total_price: item.totalPrice,
-      }));
-
-      const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
-
-      if (itemsError) throw itemsError;
+      if (!res.ok) {
+        throw new Error(result.error || 'Failed to place order');
+      }
 
       // Send order confirmation notification (email + SMS)
       // Fire-and-forget — don't block the redirect on notification delivery
       fetch('/api/notifications/order-confirmation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: order.id }),
+        body: JSON.stringify({ orderId: result.order_id }),
       }).catch((notifErr) => {
         console.error('Failed to send order confirmation notification:', notifErr);
       });
 
       // Clear cart and redirect to success
       clearCart();
-      router.push(`/orders/${order.id}/confirmation`);
+      router.push(`/orders/${result.order_id}/confirmation`);
     } catch (err: unknown) {
       console.error('Order error:', err);
       const message = err instanceof Error ? err.message : 'Failed to place order. Please try again.';
       setError(message);
       setIsSubmitting(false);
     }
-  };
-
-  const getNextOrderDate = (day: OrderDay): string => {
-    const now = new Date();
-    const dayOfWeek = day === 'monday' ? 1 : 4;
-    const daysUntil = (dayOfWeek - now.getDay() + 7) % 7 || 7;
-    const nextDate = new Date(now);
-    nextDate.setDate(now.getDate() + daysUntil);
-    return nextDate.toISOString().split('T')[0];
   };
 
   if (authLoading || !user || state.isLoading || isLoading) {
