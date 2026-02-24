@@ -20,6 +20,8 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const itemCount = cartState.itemCount;
+  const isHomePage = pathname === '/';
+  const isHeroVisible = isHomePage && !isScrolled;
 
   // Hide header on admin routes (admin has its own navigation)
   const isAdminRoute = pathname.startsWith('/admin');
@@ -60,7 +62,7 @@ export function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-primary">
+            <span className={cn('text-2xl font-bold transition-colors duration-300', isHeroVisible ? 'text-white' : 'text-primary')}>
               {siteConfig.name}
             </span>
           </Link>
@@ -73,7 +75,9 @@ export function Header() {
                 href={item.href}
                 className={cn(
                   'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
-                  'text-foreground/80 hover:text-foreground hover:bg-secondary'
+                  isHeroVisible
+                    ? 'text-white/85 hover:text-white hover:bg-white/10'
+                    : 'text-foreground/80 hover:text-foreground hover:bg-secondary'
                 )}
               >
                 {item.label}
@@ -84,7 +88,7 @@ export function Header() {
           {/* Right side actions */}
           <div className="hidden md:flex items-center gap-2">
             {/* Cart */}
-            <Button asChild variant="ghost" size="icon" className="relative">
+            <Button asChild variant="ghost" size="icon" className={cn('relative', isHeroVisible && 'text-white hover:bg-white/10')}>
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -97,7 +101,7 @@ export function Header() {
 
             {/* Admin Link for Staff */}
             {!isLoading && isStaff && (
-              <Button asChild variant="ghost" size="sm">
+              <Button asChild variant="ghost" size="sm" className={cn(isHeroVisible && 'text-white hover:bg-white/10')}>
                 <Link href="/admin" className="flex items-center gap-2">
                   <Shield className="h-4 w-4" />
                   <span>Admin</span>
@@ -110,7 +114,7 @@ export function Header() {
               <>
                 {(customer || user) ? (
                   <div className="flex items-center gap-2">
-                    <Button asChild variant="ghost" size="sm">
+                    <Button asChild variant="ghost" size="sm" className={cn(isHeroVisible && 'text-white hover:bg-white/10')}>
                       <Link href="/account" className="flex items-center gap-2">
                         <User className="h-4 w-4" />
                         {!isStaff && (
@@ -120,13 +124,13 @@ export function Header() {
                         )}
                       </Link>
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sign out">
+                    <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sign out" className={cn(isHeroVisible && 'text-white hover:bg-white/10')}>
                       <LogOut className="h-4 w-4" />
                     </Button>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <Button asChild variant="ghost" size="sm">
+                    <Button asChild variant="ghost" size="sm" className={cn(isHeroVisible && 'text-white hover:bg-white/10')}>
                       <Link href="/login">Sign In</Link>
                     </Button>
                     <Button asChild size="sm">
@@ -146,7 +150,7 @@ export function Header() {
           {/* Mobile Menu */}
           <div className="flex items-center gap-2 md:hidden">
             {/* Mobile Cart */}
-            <Button asChild variant="ghost" size="icon" className="relative">
+            <Button asChild variant="ghost" size="icon" className={cn('relative', isHeroVisible && 'text-white hover:bg-white/10')}>
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -159,7 +163,7 @@ export function Header() {
 
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className={cn(isHeroVisible && 'text-white hover:bg-white/10')}>
                   <Menu className="h-6 w-6" />
                   <span className="sr-only">Toggle menu</span>
                 </Button>
