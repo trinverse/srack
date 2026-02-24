@@ -72,6 +72,7 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [adminError, setAdminError] = useState<string | null>(null);
 
   // Form state for new/edit item
   const [formData, setFormData] = useState<Partial<MenuItem>>({});
@@ -83,6 +84,7 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
   const toggleSetting = async (key: string) => {
     const setting = settings.find(s => s.setting_key === key);
     if (!setting) return;
+    setAdminError(null);
 
     const newValue = setting.setting_value === 'true' ? 'false' : 'true';
 
@@ -91,7 +93,9 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
       .update({ setting_value: newValue })
       .eq('setting_key', key);
 
-    if (!error) {
+    if (error) {
+      setAdminError(`Failed to update setting "${key}": ${error.message}`);
+    } else {
       setSettings(settings.map(s =>
         s.setting_key === key ? { ...s, setting_value: newValue } : s
       ));
@@ -99,12 +103,15 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
   };
 
   const toggleItemActive = async (item: MenuItem) => {
+    setAdminError(null);
     const { error } = await supabase
       .from('menu_items')
       .update({ is_active: !item.is_active })
       .eq('id', item.id);
 
-    if (!error) {
+    if (error) {
+      setAdminError(`Failed to toggle "${item.name}": ${error.message}`);
+    } else {
       setMenuItems(menuItems.map(m =>
         m.id === item.id ? { ...m, is_active: !m.is_active } : m
       ));
@@ -194,6 +201,7 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
     setIsSaving(true);
 
     try {
+      setAdminError(null);
       if (isCreating) {
         const { data, error } = await supabase
           .from('menu_items')
@@ -201,7 +209,9 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
           .select()
           .single();
 
-        if (!error && data) {
+        if (error) {
+          setAdminError(`Failed to create item: ${error.message}`);
+        } else if (data) {
           setMenuItems([...menuItems, data]);
           closeForm();
         }
@@ -211,7 +221,9 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
           .update(formData)
           .eq('id', editingItem.id);
 
-        if (!error) {
+        if (error) {
+          setAdminError(`Failed to update item: ${error.message}`);
+        } else {
           setMenuItems(menuItems.map(m =>
             m.id === editingItem.id ? { ...m, ...formData } : m
           ));
@@ -225,13 +237,16 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
 
   const handleDelete = async (item: MenuItem) => {
     if (!confirm(`Are you sure you want to delete "${item.name}"?`)) return;
+    setAdminError(null);
 
     const { error } = await supabase
       .from('menu_items')
       .delete()
       .eq('id', item.id);
 
-    if (!error) {
+    if (error) {
+      setAdminError(`Failed to delete "${item.name}": ${error.message}`);
+    } else {
       setMenuItems(menuItems.filter(m => m.id !== item.id));
     }
   };
@@ -252,6 +267,14 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
 
   return (
     <div className="space-y-6">
+      {/* Admin Error Banner */}
+      {adminError && (
+        <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm flex items-center justify-between">
+          <span>⚠️ {adminError}</span>
+          <button onClick={() => setAdminError(null)} className="ml-4 font-bold hover:underline">✕</button>
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Menu Management</h1>

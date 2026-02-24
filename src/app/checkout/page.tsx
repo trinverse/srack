@@ -274,10 +274,11 @@ export default function CheckoutPage() {
 
       // Clear cart and redirect to success
       clearCart();
-      router.push(`/orders/${order.id}/confirmation`);
-    } catch (err) {
+      router.push(`/orders/${result.order_id}/confirmation`);
+    } catch (err: unknown) {
       console.error('Order error:', err);
-      setError('Failed to place order. Please try again.');
+      const message = err instanceof Error ? err.message : 'Failed to place order. Please try again.';
+      setError(message);
       setIsSubmitting(false);
     }
   };
