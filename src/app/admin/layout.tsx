@@ -14,6 +14,7 @@ import {
   Menu as MenuIcon,
   X,
   MessageSquare,
+  ExternalLink,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/auth-context';
@@ -108,6 +109,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </Link>
             );
           })}
+          <a
+            href="/menu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-muted-foreground hover:bg-muted hover:text-foreground border border-dashed border-muted-foreground/30 mt-3"
+          >
+            <ExternalLink className="h-5 w-5" />
+            <span>Preview Site</span>
+          </a>
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t">

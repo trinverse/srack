@@ -78,6 +78,16 @@ export function OrdersManagement({ initialOrders }: OrdersManagementProps) {
           order.id === orderId ? { ...order, status: newStatus } : order
         )
       );
+
+      // Send status change notification (email + SMS)
+      // Fire-and-forget — don't block the UI on notification delivery
+      fetch('/api/notifications/order-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, newStatus }),
+      }).catch((notifErr) => {
+        console.error('Failed to send status notification:', notifErr);
+      });
     } catch (error) {
       console.error('Error updating order status:', error);
       alert('Failed to update order status');
