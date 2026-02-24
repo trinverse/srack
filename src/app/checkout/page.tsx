@@ -209,11 +209,6 @@ export default function CheckoutPage() {
       const discountAmount = discountApplied?.amount || 0;
       const total = state.subtotal + tax - discountAmount;
 
-<<<<<<< HEAD
-      if (!res.ok) {
-        throw new Error(result.error || 'Failed to place order');
-      }
-=======
       // Create order
       const { data: order, error: orderError } = await supabase
         .from('orders')
@@ -266,7 +261,6 @@ export default function CheckoutPage() {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
 
       if (itemsError) throw itemsError;
->>>>>>> 04d90c4eaa1263ca8a857c141625d1d2967a5dca
 
       // Send order confirmation notification (email + SMS)
       // Fire-and-forget — don't block the redirect on notification delivery
@@ -280,7 +274,7 @@ export default function CheckoutPage() {
 
       // Clear cart and redirect to success
       clearCart();
-      router.push(`/orders/${result.order_id}/confirmation`);
+      router.push(`/orders/${order.id}/confirmation`);
     } catch (err: unknown) {
       console.error('Order error:', err);
       const message = err instanceof Error ? err.message : 'Failed to place order. Please try again.';
@@ -289,8 +283,6 @@ export default function CheckoutPage() {
     }
   };
 
-<<<<<<< HEAD
-=======
   const getNextOrderDate = (day: OrderDay): string => {
     const now = new Date();
     const dayOfWeek = day === 'monday' ? 1 : 4;
@@ -300,7 +292,6 @@ export default function CheckoutPage() {
     return nextDate.toISOString().split('T')[0];
   };
 
->>>>>>> 04d90c4eaa1263ca8a857c141625d1d2967a5dca
   if (authLoading || !user || state.isLoading || isLoading) {
     return (
       <div className="pt-20 min-h-screen flex items-center justify-center">
