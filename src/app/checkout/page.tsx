@@ -11,6 +11,7 @@ import {
   Calendar,
   Gift,
   CreditCard,
+  Banknote,
   AlertCircle,
   Loader2,
   ArrowLeft,
@@ -22,16 +23,17 @@ import { useCart } from '@/context/cart-context';
 import { useAuth } from '@/context/auth-context';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { GooglePlacesAutocomplete, type ParsedAddress } from '@/components/google-places-autocomplete';
 import type { PickupLocation, CustomerAddress, OrderDay, OrderType } from '@/types/database';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { state, clearCart, setOrderDay } = useCart();
-  const { user, customer } = useAuth();
+  const { state, clearCart } = useCart();
+  const { user, customer, isLoading: authLoading } = useAuth();
   const supabase = createClient();
 
+  const orderDay = state.orderDay || 'monday';
   const [orderType, setOrderType] = useState<OrderType>('delivery');
-  const [orderDay, setOrderDayState] = useState<OrderDay>('monday');
   const [pickupLocations, setPickupLocations] = useState<PickupLocation[]>([]);
   const [selectedPickupLocation, setSelectedPickupLocation] = useState<string>('');
   const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
@@ -40,6 +42,7 @@ export default function CheckoutPage() {
   const [giftDetails, setGiftDetails] = useState({ name: '', phone: '', notes: '' });
   const [discountCode, setDiscountCode] = useState('');
   const [discountApplied, setDiscountApplied] = useState<{ amount: number; code: string } | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'online'>('cash');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,20 +50,18 @@ export default function CheckoutPage() {
 
   // New address form
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<ParsedAddress | null>(null);
   const [newAddress, setNewAddress] = useState({
-    street_address: '',
     apartment_number: '',
-    building_name: '',
-    city: 'Atlanta',
-    state: 'GA',
-    zip_code: '',
     gate_code: '',
-    parking_instructions: '',
     delivery_notes: '',
   });
   const [zipError, setZipError] = useState('');
 
   useEffect(() => {
+    // Wait for auth to finish loading before checking user
+    if (authLoading) return;
+
     if (!user) {
       router.push('/login?redirect=/checkout');
       return;
@@ -68,40 +69,44 @@ export default function CheckoutPage() {
 
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, router]);
+  }, [user, customer, authLoading, router]);
 
   const loadData = async () => {
     setIsLoading(true);
 
-    // Load pickup locations
-    const { data: locations } = await supabase
-      .from('pickup_locations')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order');
-
-    if (locations) {
-      setPickupLocations(locations);
-    }
-
-    // Load customer addresses
-    if (customer) {
-      const { data: addrs } = await supabase
-        .from('customer_addresses')
+    try {
+      // Load pickup locations
+      const { data: locations } = await supabase
+        .from('pickup_locations')
         .select('*')
-        .eq('customer_id', customer.id)
-        .eq('address_type', 'shipping');
+        .eq('is_active', true)
+        .order('sort_order');
 
-      if (addrs) {
-        setAddresses(addrs);
-        const defaultAddr = addrs.find((a) => a.is_default);
-        if (defaultAddr) {
-          setSelectedAddress(defaultAddr.id);
+      if (locations) {
+        setPickupLocations(locations);
+      }
+
+      // Load customer addresses
+      if (customer) {
+        const { data: addrs } = await supabase
+          .from('customer_addresses')
+          .select('*')
+          .eq('customer_id', customer.id)
+          .eq('address_type', 'shipping');
+
+        if (addrs) {
+          setAddresses(addrs);
+          const defaultAddr = addrs.find((a) => a.is_default);
+          if (defaultAddr) {
+            setSelectedAddress(defaultAddr.id);
+          }
         }
       }
+    } catch (err) {
+      console.error('Failed to load checkout data:', err);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const validateZipCode = async (zip: string) => {
@@ -115,26 +120,30 @@ export default function CheckoutPage() {
     return !!data;
   };
 
-  const handleAddAddress = async () => {
+  const handlePlaceSelected = async (place: ParsedAddress) => {
     setZipError('');
-
-    if (!newAddress.zip_code || newAddress.zip_code.length !== 5) {
-      setZipError('Please enter a valid 5-digit ZIP code');
-      return;
-    }
-
-    const isValid = await validateZipCode(newAddress.zip_code);
+    const isValid = await validateZipCode(place.zip_code);
     if (!isValid) {
       setZipError('Sorry, we do not deliver to this ZIP code. Please choose pickup instead.');
+      setSelectedPlace(null);
       return;
     }
+    setSelectedPlace(place);
+  };
 
-    if (!customer) return;
+  const handleAddAddress = async () => {
+    if (!selectedPlace || !customer) return;
 
     const { data, error } = await supabase.from('customer_addresses').insert({
       customer_id: customer.id,
       address_type: 'shipping',
-      ...newAddress,
+      street_address: selectedPlace.street_address,
+      city: selectedPlace.city,
+      state: selectedPlace.state,
+      zip_code: selectedPlace.zip_code,
+      apartment_number: newAddress.apartment_number || null,
+      gate_code: newAddress.gate_code || null,
+      delivery_notes: newAddress.delivery_notes || null,
       is_default: addresses.length === 0,
     }).select().single();
 
@@ -147,17 +156,8 @@ export default function CheckoutPage() {
       setAddresses([...addresses, data]);
       setSelectedAddress(data.id);
       setShowNewAddressForm(false);
-      setNewAddress({
-        street_address: '',
-        apartment_number: '',
-        building_name: '',
-        city: 'Atlanta',
-        state: 'GA',
-        zip_code: '',
-        gate_code: '',
-        parking_instructions: '',
-        delivery_notes: '',
-      });
+      setSelectedPlace(null);
+      setNewAddress({ apartment_number: '', gate_code: '', delivery_notes: '' });
     }
   };
 
@@ -197,37 +197,80 @@ export default function CheckoutPage() {
     setError('');
 
     try {
-      // Build the payload — only send item IDs, sizes, quantities
-      // The server will fetch real prices from the database
-      const payload = {
-        items: state.items.map((item) => ({
-          menu_item_id: item.menuItem.id,
-          size: item.size,
-          quantity: item.quantity,
-        })),
-        order_type: orderType,
-        order_day: orderDay,
-        address_id: orderType === 'delivery' ? selectedAddress : undefined,
-        pickup_location_id: orderType === 'pickup' ? selectedPickupLocation : undefined,
-        is_gift: isGift,
-        recipient_name: isGift ? giftDetails.name : undefined,
-        recipient_phone: isGift ? giftDetails.phone : undefined,
-        recipient_notes: isGift ? giftDetails.notes : undefined,
-        discount_code: discountApplied?.code || undefined,
-        agreed_to_terms: agreedToTerms,
-      };
+      // Get the selected address
+      const address = addresses.find((a) => a.id === selectedAddress);
 
-      const res = await fetch('/api/place-order', {
+      // Generate order number
+      const orderNumber = `SR-${Date.now().toString(36).toUpperCase()}`;
+
+      // Calculate totals
+      const taxRate = 0.08;
+      const tax = state.subtotal * taxRate;
+      const discountAmount = discountApplied?.amount || 0;
+      const total = state.subtotal + tax - discountAmount;
+
+      // Create order
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          order_number: orderNumber,
+          customer_id: customer.id,
+          order_type: orderType,
+          order_day: orderDay,
+          order_date: getNextOrderDate(orderDay),
+          status: 'pending',
+          shipping_street_address: address?.street_address,
+          shipping_apartment: address?.apartment_number,
+          shipping_building_name: address?.building_name,
+          shipping_city: address?.city,
+          shipping_state: address?.state,
+          shipping_zip_code: address?.zip_code,
+          shipping_gate_code: address?.gate_code,
+          shipping_parking_instructions: address?.parking_instructions,
+          shipping_delivery_notes: address?.delivery_notes,
+          pickup_location_id: orderType === 'pickup' ? selectedPickupLocation : null,
+          is_gift: isGift,
+          recipient_name: isGift ? giftDetails.name : null,
+          recipient_phone: isGift ? giftDetails.phone : null,
+          recipient_notes: isGift ? giftDetails.notes : null,
+          subtotal: state.subtotal,
+          tax,
+          discount_amount: discountAmount,
+          total,
+          agreed_to_terms: agreedToTerms,
+          agreed_to_delivery_terms: orderType === 'delivery' ? agreedToTerms : null,
+          agreed_to_pickup_terms: orderType === 'pickup' ? agreedToTerms : null,
+          payment_status: paymentMethod === 'cash' ? 'cash_on_delivery' : 'pending',
+        })
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Create order items
+      const orderItems = state.items.map((item) => ({
+        order_id: order.id,
+        menu_item_id: item.menuItem.id,
+        item_name: item.menuItem.name,
+        size: item.size,
+        quantity: item.quantity,
+        unit_price: item.unitPrice,
+        total_price: item.totalPrice,
+      }));
+
+      const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      // Send order confirmation notification (email + SMS)
+      // Fire-and-forget — don't block the redirect on notification delivery
+      fetch('/api/notifications/order-confirmation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ orderId: order.id }),
+      }).catch((notifErr) => {
+        console.error('Failed to send order confirmation notification:', notifErr);
       });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.error || 'Failed to place order');
-      }
 
       // Clear cart and redirect to success
       clearCart();
@@ -240,7 +283,16 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!user || state.isLoading || isLoading) {
+  const getNextOrderDate = (day: OrderDay): string => {
+    const now = new Date();
+    const dayOfWeek = day === 'monday' ? 1 : 4;
+    const daysUntil = (dayOfWeek - now.getDay() + 7) % 7 || 7;
+    const nextDate = new Date(now);
+    nextDate.setDate(now.getDate() + daysUntil);
+    return nextDate.toISOString().split('T')[0];
+  };
+
+  if (authLoading || !user || state.isLoading || isLoading) {
     return (
       <div className="pt-20 min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-emerald" />
@@ -297,46 +349,15 @@ export default function CheckoutPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Order Day Selection */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() => {
-                        setOrderDayState('monday');
-                        setOrderDay('monday');
-                      }}
-                      className={cn(
-                        'p-4 rounded-lg border-2 text-left transition-colors',
-                        orderDay === 'monday'
-                          ? 'border-emerald bg-emerald/5'
-                          : 'border-border hover:border-emerald/50'
-                      )}
-                    >
-                      <Calendar className="h-5 w-5 mb-2 text-emerald" />
-                      <div className="font-semibold">Monday</div>
-                      <div className="text-sm text-muted-foreground flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        Order by Sun 12 PM
-                      </div>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setOrderDayState('thursday');
-                        setOrderDay('thursday');
-                      }}
-                      className={cn(
-                        'p-4 rounded-lg border-2 text-left transition-colors',
-                        orderDay === 'thursday'
-                          ? 'border-gold bg-gold/5'
-                          : 'border-border hover:border-gold/50'
-                      )}
-                    >
-                      <Calendar className="h-5 w-5 mb-2 text-gold" />
-                      <div className="font-semibold">Thursday</div>
-                      <div className="text-sm text-muted-foreground flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        Order by Wed 12 PM
-                      </div>
-                    </button>
+                  {/* Delivery day info - auto-determined from menu items */}
+                  <div className="p-3 bg-emerald/5 border border-emerald/20 rounded-lg flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-emerald" />
+                    <span className="text-sm font-medium">
+                      {orderDay === 'monday' ? 'Monday' : 'Thursday'} Delivery
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      &mdash; Order by {orderDay === 'monday' ? 'Sun' : 'Wed'} 12 PM
+                    </span>
                   </div>
 
                   {/* Delivery vs Pickup */}
@@ -453,142 +474,76 @@ export default function CheckoutPage() {
                     {showNewAddressForm ? (
                       <div className="space-y-4 p-4 border rounded-lg">
                         <h4 className="font-medium">Add New Address</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-1">
-                              Street Address *
-                            </label>
-                            <input
-                              type="text"
-                              value={newAddress.street_address}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, street_address: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="123 Main St"
-                              required
-                            />
+
+                        <GooglePlacesAutocomplete
+                          onPlaceSelected={handlePlaceSelected}
+                          onClear={() => {
+                            setSelectedPlace(null);
+                            setZipError('');
+                          }}
+                        />
+
+                        {zipError && (
+                          <p className="text-sm text-destructive">{zipError}</p>
+                        )}
+
+                        {selectedPlace && (
+                          <div className="space-y-3 pt-3 border-t">
+                            <p className="text-sm text-emerald font-medium">
+                              ✓ {selectedPlace.formatted_address}
+                            </p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-sm font-medium mb-1">Apt/Unit #</label>
+                                <input
+                                  type="text"
+                                  value={newAddress.apartment_number}
+                                  onChange={(e) =>
+                                    setNewAddress({ ...newAddress, apartment_number: e.target.value })
+                                  }
+                                  className="w-full px-3 py-2 border rounded-lg"
+                                  placeholder="Apt 4B"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium mb-1">Gate Code</label>
+                                <input
+                                  type="text"
+                                  value={newAddress.gate_code}
+                                  onChange={(e) =>
+                                    setNewAddress({ ...newAddress, gate_code: e.target.value })
+                                  }
+                                  className="w-full px-3 py-2 border rounded-lg"
+                                  placeholder="#1234"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium mb-1">Delivery Notes</label>
+                              <textarea
+                                value={newAddress.delivery_notes}
+                                onChange={(e) =>
+                                  setNewAddress({ ...newAddress, delivery_notes: e.target.value })
+                                }
+                                className="w-full px-3 py-2 border rounded-lg"
+                                rows={2}
+                                placeholder="Gate code, parking info, leave with concierge, etc."
+                              />
+                            </div>
                           </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">
-                              Apt/Unit #
-                            </label>
-                            <input
-                              type="text"
-                              value={newAddress.apartment_number}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, apartment_number: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="Apt 4B"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">
-                              Building Name
-                            </label>
-                            <input
-                              type="text"
-                              value={newAddress.building_name}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, building_name: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="The Heights"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">City *</label>
-                            <input
-                              type="text"
-                              value={newAddress.city}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, city: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">State</label>
-                            <input
-                              type="text"
-                              value={newAddress.state}
-                              className="w-full px-3 py-2 border rounded-lg bg-muted"
-                              disabled
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">ZIP Code *</label>
-                            <input
-                              type="text"
-                              value={newAddress.zip_code}
-                              onChange={(e) =>
-                                setNewAddress({
-                                  ...newAddress,
-                                  zip_code: e.target.value.replace(/\D/g, '').slice(0, 5),
-                                })
-                              }
-                              className={cn(
-                                'w-full px-3 py-2 border rounded-lg',
-                                zipError && 'border-destructive'
-                              )}
-                              placeholder="30303"
-                              required
-                            />
-                            {zipError && (
-                              <p className="text-sm text-destructive mt-1">{zipError}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-1">Gate Code</label>
-                            <input
-                              type="text"
-                              value={newAddress.gate_code}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, gate_code: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="#1234"
-                            />
-                          </div>
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-1">
-                              Parking Instructions
-                            </label>
-                            <input
-                              type="text"
-                              value={newAddress.parking_instructions}
-                              onChange={(e) =>
-                                setNewAddress({
-                                  ...newAddress,
-                                  parking_instructions: e.target.value,
-                                })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="Park in visitor lot"
-                            />
-                          </div>
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-1">
-                              Delivery Notes
-                            </label>
-                            <textarea
-                              value={newAddress.delivery_notes}
-                              onChange={(e) =>
-                                setNewAddress({ ...newAddress, delivery_notes: e.target.value })
-                              }
-                              className="w-full px-3 py-2 border rounded-lg"
-                              rows={2}
-                              placeholder="Leave with concierge, ring doorbell, etc."
-                            />
-                          </div>
-                        </div>
+                        )}
+
                         <div className="flex gap-2">
-                          <Button onClick={handleAddAddress}>Save Address</Button>
+                          <Button onClick={handleAddAddress} disabled={!selectedPlace}>
+                            Save Address
+                          </Button>
                           <Button
                             variant="outline"
-                            onClick={() => setShowNewAddressForm(false)}
+                            onClick={() => {
+                              setShowNewAddressForm(false);
+                              setSelectedPlace(null);
+                              setZipError('');
+                            }}
                           >
                             Cancel
                           </Button>
@@ -669,6 +624,59 @@ export default function CheckoutPage() {
                           placeholder="Any special instructions for the recipient"
                         />
                       </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Payment Method */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald text-white text-sm">
+                      {orderType === 'delivery' ? '3' : '2'}
+                    </span>
+                    Payment Method
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      onClick={() => setPaymentMethod('cash')}
+                      className={cn(
+                        'p-4 rounded-lg border-2 text-left transition-colors',
+                        paymentMethod === 'cash'
+                          ? 'border-emerald bg-emerald/5'
+                          : 'border-border hover:border-emerald/50'
+                      )}
+                    >
+                      <Banknote className="h-5 w-5 mb-2 text-emerald" />
+                      <div className="font-semibold">Cash on Delivery</div>
+                      <div className="text-sm text-muted-foreground">
+                        Pay when you receive your order
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => setPaymentMethod('online')}
+                      className={cn(
+                        'p-4 rounded-lg border-2 text-left transition-colors',
+                        paymentMethod === 'online'
+                          ? 'border-emerald bg-emerald/5'
+                          : 'border-border hover:border-emerald/50'
+                      )}
+                    >
+                      <CreditCard className="h-5 w-5 mb-2 text-emerald" />
+                      <div className="font-semibold">Pay Online</div>
+                      <div className="text-sm text-muted-foreground">
+                        Coming soon
+                      </div>
+                    </button>
+                  </div>
+                  {paymentMethod === 'cash' && (
+                    <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <p className="text-sm text-amber-800">
+                        Please have the exact amount ready at the time of {orderType === 'delivery' ? 'delivery' : 'pickup'}. Total: <strong>${total.toFixed(2)}</strong>
+                      </p>
                     </div>
                   )}
                 </CardContent>
@@ -790,14 +798,20 @@ export default function CheckoutPage() {
                       </>
                     ) : (
                       <>
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        Place Order
+                        {paymentMethod === 'cash' ? (
+                          <Banknote className="mr-2 h-4 w-4" />
+                        ) : (
+                          <CreditCard className="mr-2 h-4 w-4" />
+                        )}
+                        Place Order{paymentMethod === 'cash' ? ' — Cash on Delivery' : ''}
                       </>
                     )}
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground">
-                    Payment will be collected upon confirmation
+                    {paymentMethod === 'cash'
+                      ? 'Pay with cash when your order arrives'
+                      : 'Payment will be collected upon confirmation'}
                   </p>
                 </CardContent>
               </Card>

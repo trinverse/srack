@@ -10,11 +10,15 @@ import {
   Trash2,
   Save,
   X,
+  Car,
+  Phone,
+  User,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
+import { GooglePlacesAutocomplete, type ParsedAddress } from '@/components/google-places-autocomplete';
 import type { Database } from '@/types/database';
 
 type PickupLocation = Database['public']['Tables']['pickup_locations']['Row'];
@@ -48,7 +52,20 @@ export function SettingsManagement({
 
   const supabase = createClient();
 
+  const [parsedAddress, setParsedAddress] = useState<ParsedAddress | null>(null);
+
   // Pickup Locations
+  const handlePlaceSelected = (address: ParsedAddress) => {
+    setParsedAddress(address);
+    setNewItem((prev) => ({
+      ...prev,
+      address: address.street_address,
+      city: address.city,
+      state: address.state,
+      zip_code: address.zip_code,
+    }));
+  };
+
   const handleAddPickupLocation = async () => {
     try {
       const { data, error } = await supabase
@@ -57,9 +74,12 @@ export function SettingsManagement({
           name: newItem.name as string,
           address: newItem.address as string,
           city: newItem.city as string,
-          state: 'GA',
+          state: (newItem.state as string) || 'GA',
           zip_code: newItem.zip_code as string,
           pickup_time: newItem.pickup_time as string,
+          driver_name: (newItem.driver_name as string) || null,
+          driver_phone: (newItem.driver_phone as string) || null,
+          driver_car_description: (newItem.driver_car_description as string) || null,
           is_active: true,
         })
         .select()
@@ -69,6 +89,7 @@ export function SettingsManagement({
       setPickupLocations([...pickupLocations, data]);
       setIsAdding(false);
       setNewItem({});
+      setParsedAddress(null);
     } catch (error) {
       console.error('Error adding pickup location:', error);
       alert('Failed to add pickup location');
@@ -274,40 +295,62 @@ export function SettingsManagement({
           {isAdding && (
             <Card className="border-emerald">
               <CardContent className="pt-6">
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <Input
                     placeholder="Location Name"
                     value={newItem.name || ''}
                     onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                   />
-                  <Input
-                    placeholder="Address"
-                    value={newItem.address || ''}
-                    onChange={(e) => setNewItem({ ...newItem, address: e.target.value })}
-                  />
-                  <Input
-                    placeholder="City"
-                    value={newItem.city || ''}
-                    onChange={(e) => setNewItem({ ...newItem, city: e.target.value })}
-                  />
-                  <Input
-                    placeholder="ZIP Code"
-                    value={newItem.zip_code || ''}
-                    onChange={(e) => setNewItem({ ...newItem, zip_code: e.target.value })}
-                  />
+                  <div>
+                    <GooglePlacesAutocomplete
+                      onPlaceSelected={handlePlaceSelected}
+                      onClear={() => {
+                        setParsedAddress(null);
+                        setNewItem((prev) => {
+                          const { address, city, state, zip_code, ...rest } = prev;
+                          return rest;
+                        });
+                      }}
+                      placeholder="Search for pickup address..."
+                    />
+                    {parsedAddress && (
+                      <p className="text-sm text-muted-foreground mt-2">
+                        {parsedAddress.street_address}, {parsedAddress.city}, {parsedAddress.state} {parsedAddress.zip_code}
+                      </p>
+                    )}
+                  </div>
                   <Input
                     placeholder="Pickup Times (e.g., 5:00 PM - 7:00 PM)"
                     value={newItem.pickup_time || ''}
                     onChange={(e) => setNewItem({ ...newItem, pickup_time: e.target.value })}
-                    className="md:col-span-2"
                   />
+                  <div className="border-t pt-4">
+                    <p className="text-sm font-medium text-muted-foreground mb-3">Driver Info (optional)</p>
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <Input
+                        placeholder="Driver Name"
+                        value={newItem.driver_name || ''}
+                        onChange={(e) => setNewItem({ ...newItem, driver_name: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Driver Phone"
+                        value={newItem.driver_phone || ''}
+                        onChange={(e) => setNewItem({ ...newItem, driver_phone: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Car Description"
+                        value={newItem.driver_car_description || ''}
+                        onChange={(e) => setNewItem({ ...newItem, driver_car_description: e.target.value })}
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="flex gap-2 mt-4">
                   <Button onClick={handleAddPickupLocation}>
                     <Save className="h-4 w-4 mr-2" />
                     Save
                   </Button>
-                  <Button variant="outline" onClick={() => { setIsAdding(false); setNewItem({}); }}>
+                  <Button variant="outline" onClick={() => { setIsAdding(false); setNewItem({}); setParsedAddress(null); }}>
                     <X className="h-4 w-4 mr-2" />
                     Cancel
                   </Button>
@@ -334,6 +377,25 @@ export function SettingsManagement({
                         {location.address}, {location.city}, {location.state} {location.zip_code}
                       </p>
                       <p className="text-sm text-muted-foreground">{location.pickup_time}</p>
+                      {(location.driver_name || location.driver_phone || location.driver_car_description) && (
+                        <div className="flex flex-wrap gap-3 mt-1 text-xs text-muted-foreground">
+                          {location.driver_name && (
+                            <span className="flex items-center gap-1">
+                              <User className="h-3 w-3" /> {location.driver_name}
+                            </span>
+                          )}
+                          {location.driver_phone && (
+                            <span className="flex items-center gap-1">
+                              <Phone className="h-3 w-3" /> {location.driver_phone}
+                            </span>
+                          )}
+                          {location.driver_car_description && (
+                            <span className="flex items-center gap-1">
+                              <Car className="h-3 w-3" /> {location.driver_car_description}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-2">
                       <Button
