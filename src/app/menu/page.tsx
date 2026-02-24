@@ -21,6 +21,17 @@ export default async function MenuPage() {
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
 
+  // Check for a real error (Supabase can return empty {} which is truthy)
+  if (error && (error.message || error.code)) {
+    console.error('Error fetching menu:', JSON.stringify(error));
+    return (
+      <div className="container-wide py-16 text-center">
+        <h1 className="text-2xl font-bold text-destructive">Error loading menu</h1>
+        <p className="text-muted-foreground mt-2">Please try again later.</p>
+      </div>
+    );
+  }
+
   // Build image manifest from local files
   const galleryManifest = buildGalleryManifest(menuItems || []);
 
@@ -68,16 +79,6 @@ export default async function MenuPage() {
     .from('weekly_menus')
     .select('*')
     .gt('menu_date', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
-
-  if (error) {
-    console.error('Error fetching menu:', error);
-    return (
-      <div className="container-wide py-16 text-center">
-        <h1 className="text-2xl font-bold text-destructive">Error loading menu</h1>
-        <p className="text-muted-foreground mt-2">Please try again later.</p>
-      </div>
-    );
-  }
 
   return (
     <MenuPageContent

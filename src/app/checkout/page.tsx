@@ -274,7 +274,7 @@ export default function CheckoutPage() {
 
       // Clear cart and redirect to success
       clearCart();
-      router.push(`/orders/${result.order_id}/confirmation`);
+      router.push(`/orders/${order.id}/confirmation`);
     } catch (err: unknown) {
       console.error('Order error:', err);
       const message = err instanceof Error ? err.message : 'Failed to place order. Please try again.';
