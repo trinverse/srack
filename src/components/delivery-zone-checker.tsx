@@ -24,8 +24,6 @@ export function DeliveryZoneChecker() {
   const [nearbyPickups, setNearbyPickups] = useState<NearbyPickup[]>([]);
   const [inputMode, setInputMode] = useState<'address' | 'zip'>('address');
 
-  const hasGoogleApi = !!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
   const checkAvailability = async (zip: string) => {
     if (!zip || zip.length !== 5) return;
 
@@ -124,8 +122,8 @@ export function DeliveryZoneChecker() {
             <button
               onClick={() => { setInputMode('address'); resetCheck(); }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${inputMode === 'address'
-                  ? 'bg-emerald text-white'
-                  : 'bg-secondary text-muted-foreground hover:text-foreground'
+                ? 'bg-emerald text-white'
+                : 'bg-secondary text-muted-foreground hover:text-foreground'
                 }`}
             >
               <Navigation className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
@@ -134,8 +132,8 @@ export function DeliveryZoneChecker() {
             <button
               onClick={() => { setInputMode('zip'); resetCheck(); }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${inputMode === 'zip'
-                  ? 'bg-emerald text-white'
-                  : 'bg-secondary text-muted-foreground hover:text-foreground'
+                ? 'bg-emerald text-white'
+                : 'bg-secondary text-muted-foreground hover:text-foreground'
                 }`}
             >
               <MapPin className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
@@ -145,7 +143,7 @@ export function DeliveryZoneChecker() {
 
           {/* Input area */}
           <div className="max-w-lg mx-auto">
-            {inputMode === 'address' && hasGoogleApi ? (
+            {inputMode === 'address' ? (
               <GooglePlacesAutocomplete
                 onPlaceSelected={handlePlaceSelected}
                 onClear={resetCheck}

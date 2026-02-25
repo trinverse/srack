@@ -120,8 +120,7 @@ export function GooglePlacesAutocomplete({
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder={isLoaded ? placeholder : 'Loading...'}
-        disabled={!isLoaded}
+        placeholder={placeholder}
         className={`w-full pl-10 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald bg-background ${className || ''}`}
       />
       {value && (

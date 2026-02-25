@@ -69,7 +69,7 @@ export default function FAQPage() {
                     <AccordionItem
                       key={faq.id}
                       value={faq.id}
-                      className="bg-background border rounded-lg px-6"
+                      className="bg-background border-2 border-emerald-500/30 data-[state=open]:border-emerald-500/60 rounded-xl px-6 transition-colors shadow-sm"
                     >
                       <AccordionTrigger className="text-left hover:no-underline py-5">
                         <span className="font-medium">{faq.question}</span>
