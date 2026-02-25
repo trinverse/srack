@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cateringTiers } from '@/data/faq';
 import { contactInfo } from '@/data/site';
+import { cn } from '@/lib/utils';
 
 export default function CateringPage() {
   const [formData, setFormData] = useState({
@@ -17,7 +18,16 @@ export default function CateringPage() {
     guestCount: '',
     eventType: '',
     message: '',
+    selectedPackage: '',
   });
+
+  const handlePackageSelect = (packageId: string) => {
+    setFormData((prev) => ({ ...prev, selectedPackage: packageId }));
+    const formElement = document.getElementById('inquiry-form');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,11 +88,23 @@ export default function CateringPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card
-                  className={`h-full ${
-                    index === 1 ? 'border-primary shadow-lg' : ''
-                  }`}
+                  className={cn(
+                    "h-full relative overflow-hidden transition-all duration-300 border-2",
+                    formData.selectedPackage === tier.id
+                      ? "border-emerald-500 shadow-xl ring-4 ring-emerald-500/10 scale-[1.02] bg-emerald-50/10"
+                      : index === 1
+                        ? "border-primary/50 shadow-lg hover:border-border"
+                        : "border-transparent hover:border-border"
+                  )}
+                  onClick={() => handlePackageSelect(tier.id)}
+                  style={{ cursor: 'pointer' }}
                 >
-                  {index === 1 && (
+                  {formData.selectedPackage === tier.id && (
+                    <div className="absolute top-0 right-0 bg-emerald-500 text-white px-3 py-1 text-xs font-bold rounded-bl-lg z-10">
+                      Selected
+                    </div>
+                  )}
+                  {index === 1 && formData.selectedPackage !== tier.id && (
                     <div className="bg-primary text-primary-foreground text-center py-2 text-sm font-medium">
                       Most Popular
                     </div>
@@ -112,6 +134,18 @@ export default function CateringPage() {
                         </li>
                       ))}
                     </ul>
+                    <div className="mt-8">
+                      <Button
+                        variant={formData.selectedPackage === tier.id ? "default" : "outline"}
+                        className={cn("w-full transition-all", formData.selectedPackage === tier.id ? "bg-emerald-500 hover:bg-emerald-600 text-white" : "")}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePackageSelect(tier.id);
+                        }}
+                      >
+                        {formData.selectedPackage === tier.id ? "Package Selected" : "Select Package"}
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -143,7 +177,7 @@ export default function CateringPage() {
           >
             <Card>
               <CardContent className="p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form id="inquiry-form" onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium mb-2">
@@ -233,6 +267,25 @@ export default function CateringPage() {
                         <option value="birthday">Birthday Party</option>
                         <option value="anniversary">Anniversary</option>
                         <option value="other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Selected Package
+                      </label>
+                      <select
+                        value={formData.selectedPackage}
+                        onChange={(e) =>
+                          setFormData({ ...formData, selectedPackage: e.target.value })
+                        }
+                        className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                      >
+                        <option value="">No package selected</option>
+                        {cateringTiers.map(t => (
+                          <option key={t.id} value={t.id}>
+                            {t.name} (${t.pricePerPerson}/person)
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>

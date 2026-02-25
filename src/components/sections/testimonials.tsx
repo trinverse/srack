@@ -7,16 +7,16 @@ import { testimonials } from '@/data/faq';
 
 export function Testimonials() {
   return (
-    <section className="py-24">
+    <section className="py-12 bg-secondary/10">
       <div className="container-wide">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-8">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="mb-4"
+            className="mb-2 text-3xl md:text-4xl"
           >
             What Our Customers Say
           </motion.h2>
@@ -25,7 +25,7 @@ export function Testimonials() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-muted-foreground text-lg"
+            className="text-muted-foreground text-base"
           >
             Join hundreds of satisfied customers who have made The Spice Rack
             their go-to for authentic Indian cuisine.
@@ -33,7 +33,7 @@ export function Testimonials() {
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
@@ -42,36 +42,36 @@ export function Testimonials() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="h-full">
-                <CardContent className="p-8">
+              <Card className="h-full hover:shadow-md transition-shadow">
+                <CardContent className="p-5 flex flex-col h-full">
                   {/* Quote icon */}
-                  <Quote className="h-10 w-10 text-primary/20 mb-4" />
+                  <Quote className="h-6 w-6 text-primary/20 mb-3" />
 
                   {/* Rating */}
-                  <div className="flex items-center space-x-1 mb-4">
+                  <div className="flex items-center space-x-1 mb-3">
                     {Array.from({ length: testimonial.rating }).map((_, i) => (
                       <Star
                         key={i}
-                        className="h-5 w-5 fill-accent text-accent"
+                        className="h-4 w-4 fill-accent text-accent"
                       />
                     ))}
                   </div>
 
                   {/* Content */}
-                  <p className="text-foreground/80 text-lg mb-6 leading-relaxed">
+                  <p className="text-foreground/80 text-sm mb-4 leading-relaxed flex-grow">
                     &ldquo;{testimonial.content}&rdquo;
                   </p>
 
                   {/* Author */}
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="text-primary font-semibold">
+                  <div className="flex items-center space-x-3 mt-auto">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-primary font-semibold text-sm">
                         {testimonial.name.charAt(0)}
                       </span>
                     </div>
-                    <div>
-                      <p className="font-semibold">{testimonial.name}</p>
-                      <p className="text-muted-foreground text-sm">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm truncate">{testimonial.name}</p>
+                      <p className="text-muted-foreground text-xs truncate">
                         {testimonial.location}
                       </p>
                     </div>
