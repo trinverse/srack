@@ -1,44 +1,44 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, ShoppingCart, ChefHat, Truck, Flame } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { howItWorks } from '@/data/site';
 
-const icons = [ShoppingCart, ChefHat, Truck, Flame];
+const stepImages = [
+  '/img/img1.webp',
+  '/img/img2.webp',
+  '/img/img3.webp',
+  '/img/img4.webp'
+];
 
 export function HowItWorksPreview() {
   return (
-    <section className="py-24 bg-primary text-primary-foreground">
+    <section className="py-24 bg-white text-foreground">
       <div className="container-wide">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mb-4 text-primary-foreground"
-          >
-            Delicious Meals, Delivered Simply
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-primary-foreground/80 text-lg"
-          >
-            Getting delicious home-style Indian food is simple.
-            Four easy steps to your next meal.
-          </motion.p>
+        <div className="text-center max-w-2xl mx-auto mb-20 relative">
+          <div className="flex items-center justify-center gap-4">
+            <div className="h-px bg-foreground/20 flex-1 hidden sm:block" />
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-foreground uppercase tracking-widest text-lg md:text-xl font-bold font-sans whitespace-nowrap"
+            >
+              Delicious Meals, Delivered Simply
+            </motion.h2>
+            <div className="h-px bg-foreground/20 flex-1 hidden sm:block" />
+          </div>
         </div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-16">
           {howItWorks.map((step, index) => {
-            const Icon = icons[index];
+            const imageSrc = stepImages[index];
             return (
               <motion.div
                 key={step.step}
@@ -46,25 +46,26 @@ export function HowItWorksPreview() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-center relative"
+                className="text-center relative flex flex-col items-center"
               >
-                {/* Connector line */}
-                {index < howItWorks.length - 1 && (
-                  <div className="hidden lg:block absolute top-12 left-1/2 w-full h-0.5 bg-primary-foreground/20" />
-                )}
 
-                {/* Step number with icon */}
-                <div className="relative inline-flex items-center justify-center w-24 h-24 bg-primary-foreground text-primary rounded-full mb-6">
-                  <Icon className="h-10 w-10" />
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-accent text-accent-foreground rounded-full flex items-center justify-center font-bold text-sm">
-                    {step.step}
-                  </div>
+                {/* Image instead of Icon */}
+                <div className="relative w-48 h-48 mb-8">
+                  <Image
+                    src={imageSrc}
+                    alt={step.title}
+                    fill
+                    className="object-contain"
+                    unoptimized={true}
+                  />
                 </div>
 
-                <h3 className="text-xl font-semibold mb-3 text-primary-foreground">
+                <h3 className="text-xl font-semibold mb-4 text-foreground">
                   {step.title}
                 </h3>
-                <p className="text-primary-foreground/70 text-sm">{step.description}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed max-w-[250px]">
+                  {step.description}
+                </p>
               </motion.div>
             );
           })}
@@ -81,8 +82,8 @@ export function HowItWorksPreview() {
           <Button
             asChild
             size="lg"
-            variant="secondary"
-            className="bg-primary-foreground text-primary hover:bg-primary-foreground/90"
+            variant="default"
+            className="bg-emerald hover:bg-emerald/90 text-white rounded-full px-8 py-6 text-lg font-bold"
           >
             <Link href="/how-it-works">
               Learn More
