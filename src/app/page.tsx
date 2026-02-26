@@ -15,7 +15,7 @@ export default async function Home() {
     <>
       <Hero />
       <WelcomeOffer />
-      <HowItWorksPreview />
+      {/* <HowItWorksPreview /> */}
       <Features />
       <MenuDayCards />
       <DeliveryZoneChecker />
