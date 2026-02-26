@@ -27,6 +27,7 @@ const SPELLING_ALIASES: Record<string, string> = {
     'roti': 'rotie', 'rotie': 'roti',
     'roties': 'roti',
     'chiickencurry': 'chickencurry',
+    'chiickendopyaza': 'chickendopyaza',
     'poran': 'puran', 'puran': 'poran',
     'gujvar': 'guvar', 'guvar': 'gujvar',
     'mushroom': 'mashroom', 'mashroom': 'mushroom',
@@ -49,6 +50,14 @@ const SPELLING_ALIASES: Record<string, string> = {
     'chana': 'channa',
     'carrot': 'gajar', 'gajar': 'carrot',
     'pav': 'paav', 'paav': 'pav',
+    'lado': 'laddoo', 'laddo': 'laddoo', 'ladoo': 'laddoo', 'laddoo': 'laddoo',
+    'srikahand': 'shrikhand', 'srikhand': 'shrikhand',
+    'pinapple': 'pineapple',
+    'coriender': 'coriander',
+    'penut': 'peanut',
+    'custered': 'custard',
+    'fruite': 'fruit',
+    'bhartha': 'bharta',
 };
 
 // Direct item-name -> file-name overrides for tricky cases
@@ -107,6 +116,50 @@ const MANUAL_OVERRIDES: Record<string, string> = {
     'sabudanakhichdi': 'sabudanakhichdi2',
     'upma': 'upma',
     'daalvada': 'daalvada2',
+    'cabbagematarporiyal': 'cabbageporiyal',
+    'moringastickdaal': 'drumstickdaal',
+    'moringadaal': 'drumstickdaal',
+    'plainroties': 'roties',
+    'plainroti': 'roties',
+    'chickenvindaloo': 'chickenvindaloo',
+    'chickenmakhni': 'chickenmakhni',
+    'chickenmakhani': 'chickenmakhni',
+    'wholemasoordaal': 'wholemasoordaal',
+    'matarrice': 'matarrice',
+    'jeerarice': 'jeerarice',
+    // New mappings from user feedback
+    'shrikhand': 'srikhand',
+    'dryfruitkheer': 'dryfruiterabdi',
+    'pinapplehalwapineapplehalwav': 'pinapplekesari',
+    'pineapplehalwapineapplehalwav': 'pinapplekesari',
+    'pineapplehalwa': 'pinapplekesari',
+    'pineapplekesari': 'pinapplekesari',
+    'angoorimangorabdi': 'angoorrabdi',
+    'ravaladdoo': 'ravaladoo',
+    'ganeshchurmaladdoojaggeryvvg': 'churmaladoo',
+    'ganeshchurmaladdoo': 'churmaladoo',
+    'boondikeladdoo': 'boondikeladoo',
+    'methikeladdoo': 'methikeladoo',
+    'fruitcustard': 'fruitecustered',
+    'sukhdisweetgolpapdi6piecesvvg': 'sukhdi',
+    'mangoraaswithpuriscombov': 'mangoraswithpuricombo', // User: "Mango Ras with Puri Combo.jpg"
+    'mangoraas': 'mangoraas',
+    'dahivada': 'daalvada2',
+    'paneermushroommasala': 'mashroompaneer',
+    'paneercornmasala': 'cornpaneer',
+    'whitepaneerkorma': 'paneerkorma',
+    'guvaraloo': 'alooguvar',
+    'dillaloo': 'dillkikadhi',
+    'karelaaloo': 'stuffedkarela',
+    'kadaibhindi': 'bhindimasala',
+    'bagarebaigangutivankaya': 'bagarabaigan',
+    'dhabastylekajucurry': 'kajucurry',
+    'hydrabadinawabichicken': 'hydrabadichicken',
+    'hyderabadinawabichicken': 'hydrabadichicken',
+    'corianderchickenmasala': 'hariyalichicken',
+    'coriandermintchutney': 'coriendermintchutney',
+    'peanutchutney': 'penutchutney',
+    'mangoricekheer': 'mangokheer',
 };
 
 // Suffix words that can be added/removed in matching
@@ -172,6 +225,20 @@ export function buildGalleryManifest(
             const fileAliases = getAliases(entry.normStripped);
             let matched = false;
 
+            // Reject bad cross-matches before fuzzy check
+            const itemIsPaneer = normalizedItemName.includes('paneer');
+            const fileIsPaneer = entry.norm.includes('paneer');
+            const itemIsChicken = normalizedItemName.includes('chicken');
+            const fileIsChicken = entry.norm.includes('chicken');
+
+            // Reject cross-protein matches
+            if (itemIsPaneer && fileIsChicken) continue;
+            if (itemIsChicken && fileIsPaneer) continue;
+
+            // Reject butter paneer for butter chicken and vice-versa
+            if (normalizedItemName.includes('butterpaneer') && entry.norm.includes('butterchicken')) continue;
+            if (normalizedItemName.includes('butterchicken') && entry.norm.includes('butterpaneer')) continue;
+
             // Check all combinations of item aliases vs file aliases
             for (const itemAlias of itemAliases) {
                 if (matched) break;
@@ -181,10 +248,12 @@ export function buildGalleryManifest(
                     if (fileAlias.startsWith(itemAlias)) {
                         const suffix = fileAlias.slice(itemAlias.length);
                         if (/^[0-9]*$/.test(suffix)) { matched = true; break; }
+                        if (IGNORABLE_SUFFIXES.some(s => suffix === s)) { matched = true; break; }
                     }
                     if (itemAlias.startsWith(fileAlias)) {
                         const suffix = itemAlias.slice(fileAlias.length);
                         if (IGNORABLE_SUFFIXES.some(s => suffix === s)) { matched = true; break; }
+                        if (/^[0-9]*$/.test(suffix)) { matched = true; break; }
                     }
                 }
             }

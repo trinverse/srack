@@ -16,15 +16,21 @@ const log = logger.withSource('Login');
 function LoginForm() {
   const searchParams = useSearchParams();
   const defaultRedirect = searchParams.get('redirect') || '/';
-  const { signIn, signInWithGoogle, user, isLoading: authLoading } = useAuth();
+  const { signIn, signInWithGoogle, user, customer, isLoading: authLoading } = useAuth();
   const supabase = createClient();
 
   // Redirect if already logged in
   useEffect(() => {
     if (!authLoading && user) {
-      const redirect = defaultRedirect === '/' ? '/admin' : defaultRedirect;
-      // Note: simplistic redirection logic, refinement might be needed based on role
-      window.location.href = redirect;
+      if (defaultRedirect === '/') {
+        // Instead of guessing if they are admin, send generically to /account.
+        // Staff have access to /account too and can navigate to /admin from there.
+        // This prevents the bug where normal users get dumped to /admin, rejected back to /,
+        // creating a "flicker" redirection trace.
+        window.location.href = '/account';
+      } else {
+        window.location.href = defaultRedirect;
+      }
     }
   }, [user, authLoading, defaultRedirect]);
 
@@ -48,21 +54,10 @@ function LoginForm() {
       setError(error.message);
       setIsLoading(false);
     } else {
-      // Check if user is staff to redirect to admin
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: customer } = await supabase
-          .from('customers')
-          .select('role')
-          .eq('auth_user_id', user.id)
-          .single();
-
-        const isStaff = ['admin', 'kitchen', 'marketing'].includes(customer?.role || '');
-        const targetRedirect = isStaff && defaultRedirect === '/' ? '/admin' : defaultRedirect;
-        log.info('Redirecting to:', targetRedirect);
-        window.location.href = targetRedirect;
+      if (defaultRedirect === '/') {
+        // Same logic as useEffect above to avoid flicker
+        window.location.href = '/account';
       } else {
-        log.info('Redirecting to:', defaultRedirect);
         window.location.href = defaultRedirect;
       }
     }
@@ -111,67 +106,67 @@ function LoginForm() {
         </div>
       </div>
 
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {error && (
-        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
-          {error}
-        </div>
-      )}
-
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium mb-2">
-          Email
-        </label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full pl-10 pr-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald bg-background"
-            placeholder="you@example.com"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium mb-2">
-          Password
-        </label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <input
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full pl-10 pr-12 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald bg-background"
-            placeholder="Enter your password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-          >
-            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-          </button>
-        </div>
-      </div>
-
-      <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Signing in...
-          </>
-        ) : (
-          'Sign In'
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
+            {error}
+          </div>
         )}
-      </Button>
-    </form>
+
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium mb-2">
+            Email
+          </label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full pl-10 pr-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald bg-background"
+              placeholder="you@example.com"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium mb-2">
+            Password
+          </label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full pl-10 pr-12 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald bg-background"
+              placeholder="Enter your password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            </button>
+          </div>
+        </div>
+
+        <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Signing in...
+            </>
+          ) : (
+            'Sign In'
+          )}
+        </Button>
+      </form>
     </div>
   );
 }
