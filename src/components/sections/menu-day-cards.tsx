@@ -66,7 +66,7 @@ export function MenuDayCards() {
                     asChild
                     variant="default"
                     size="lg"
-                    className="bg-emerald text-white rounded-none hover:bg-emerald/90 font-bold uppercase tracking-wider px-8"
+                    className="bg-emerald text-white rounded-full hover:bg-emerald/90 font-bold uppercase tracking-wider px-8"
                   >
                     <Link href={day.href}>
                       Order Now

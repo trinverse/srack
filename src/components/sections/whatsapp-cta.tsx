@@ -33,7 +33,7 @@ export function WhatsAppCTA() {
           <Button
             asChild
             size="lg"
-            className="bg-black hover:bg-black/90 text-white font-bold px-10 py-6 rounded-md uppercase tracking-wider text-sm"
+            className="bg-emerald hover:bg-emerald/90 text-white font-bold px-10 py-6 rounded-full uppercase tracking-wider text-sm"
           >
             <a
               href={WHATSAPP_LINK}
