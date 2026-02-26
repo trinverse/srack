@@ -459,15 +459,24 @@ export function MenuPageContent({
         </div>
       </section>
 
-      {/* Order Day Info */}
+      {/* Order Day Selector */}
       <section className="py-8 border-b">
         <div className="container-wide">
-          <div className="flex flex-col items-center gap-6">
+          <div className="flex flex-col items-center gap-4">
             <div className="flex flex-wrap gap-4 justify-center">
-              <div className={cn(
-                'flex items-center gap-3 px-6 py-3 rounded-lg border transition-all',
-                mondayActive ? 'border-emerald bg-emerald/5 ring-1 ring-emerald/20' : 'border-muted bg-muted/50 opacity-60'
-              )}>
+              {/* Monday Card - clickable to filter */}
+              <button
+                onClick={() => mondayActive && setSelectedView('monday')}
+                disabled={!mondayActive}
+                className={cn(
+                  'flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all cursor-pointer text-left',
+                  !mondayActive
+                    ? 'border-muted bg-muted/50 opacity-60 cursor-not-allowed'
+                    : selectedView === 'monday'
+                      ? 'border-emerald bg-emerald/10 ring-2 ring-emerald/30 shadow-md'
+                      : 'border-emerald/30 bg-emerald/5 hover:border-emerald/60 hover:shadow-sm'
+                )}
+              >
                 <Calendar className="h-5 w-5 text-emerald" />
                 <div>
                   <div className="font-semibold text-sm md:text-base">Monday Delivery</div>
@@ -477,15 +486,30 @@ export function MenuPageContent({
                   </div>
                 </div>
                 {mondayActive && (
-                  <span className="text-[10px] px-2 py-1 bg-emerald text-white rounded-full animate-pulse capitalize">
-                    Active
+                  <span className={cn(
+                    "text-[10px] px-2 py-1 rounded-full capitalize ml-1",
+                    selectedView === 'monday'
+                      ? "bg-emerald text-white"
+                      : "bg-emerald/20 text-emerald"
+                  )}>
+                    {selectedView === 'monday' ? 'Selected' : 'Active'}
                   </span>
                 )}
-              </div>
-              <div className={cn(
-                'flex items-center gap-3 px-6 py-3 rounded-lg border transition-all',
-                thursdayActive ? 'border-gold bg-gold/5 ring-1 ring-gold/20' : 'border-muted bg-muted/50 opacity-60'
-              )}>
+              </button>
+
+              {/* Thursday Card - clickable to filter */}
+              <button
+                onClick={() => thursdayActive && setSelectedView('thursday')}
+                disabled={!thursdayActive}
+                className={cn(
+                  'flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all cursor-pointer text-left',
+                  !thursdayActive
+                    ? 'border-muted bg-muted/50 opacity-60 cursor-not-allowed'
+                    : selectedView === 'thursday'
+                      ? 'border-gold bg-gold/10 ring-2 ring-gold/30 shadow-md'
+                      : 'border-gold/30 bg-gold/5 hover:border-gold/60 hover:shadow-sm'
+                )}
+              >
                 <Calendar className="h-5 w-5 text-gold" />
                 <div>
                   <div className="font-semibold text-sm md:text-base">Thursday Delivery</div>
@@ -495,53 +519,28 @@ export function MenuPageContent({
                   </div>
                 </div>
                 {thursdayActive && (
-                  <span className="text-[10px] px-2 py-1 bg-gold text-white rounded-full animate-pulse capitalize">
-                    Active
+                  <span className={cn(
+                    "text-[10px] px-2 py-1 rounded-full capitalize ml-1",
+                    selectedView === 'thursday'
+                      ? "bg-gold text-white"
+                      : "bg-gold/20 text-gold"
+                  )}>
+                    {selectedView === 'thursday' ? 'Selected' : 'Active'}
                   </span>
                 )}
-              </div>
+              </button>
             </div>
 
-            {/* Combined View Selector */}
-            <div className="flex flex-col items-center gap-4 w-full">
-              <div className="flex items-center gap-1 p-1 bg-muted/50 rounded-full border max-w-full overflow-x-auto no-scrollbar">
-                <button
-                  onClick={() => setSelectedView('monday')}
-                  disabled={!mondayActive}
-                  className={cn(
-                    "px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-medium transition-all whitespace-nowrap",
-                    selectedView === 'monday'
-                      ? "bg-white shadow-sm text-emerald ring-1 ring-emerald/10"
-                      : "text-muted-foreground hover:text-foreground disabled:opacity-30"
-                  )}
-                >
-                  Monday Menu
-                </button>
-                <button
-                  onClick={() => setSelectedView('thursday')}
-                  disabled={!thursdayActive}
-                  className={cn(
-                    "px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-medium transition-all whitespace-nowrap",
-                    selectedView === 'thursday'
-                      ? "bg-white shadow-sm text-emerald ring-1 ring-emerald/10"
-                      : "text-muted-foreground hover:text-foreground disabled:opacity-30"
-                  )}
-                >
-                  Thursday Menu
-                </button>
-              </div>
-
-              {selectedView !== 'full' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-xs text-muted-foreground flex items-center gap-1.5"
-                >
-                  <Clock className="h-3 w-3" />
-                  Showing items available for {selectedView === 'monday' ? formatDate(nextMonday) : formatDate(nextThursday)}
-                </motion.div>
-              )}
-            </div>
+            {selectedView !== 'full' && (
+              <motion.div
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-xs text-muted-foreground flex items-center gap-1.5"
+              >
+                <Clock className="h-3 w-3" />
+                Showing items available for {selectedView === 'monday' ? formatDate(nextMonday) : formatDate(nextThursday)}
+              </motion.div>
+            )}
           </div>
         </div>
       </section>
