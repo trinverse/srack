@@ -15,8 +15,7 @@ const informationLinks = [
 ];
 
 const shopLinks = [
-  { label: 'Monday Menu', href: '/menu/monday' },
-  { label: 'Thursday Menu', href: '/menu/thursday' },
+  { label: 'Our Menu', href: '/menu' },
   { label: 'Catering', href: '/catering' },
 ];
 

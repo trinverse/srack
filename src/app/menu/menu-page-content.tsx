@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Clock, Flame, Leaf, AlertCircle, ShoppingCart, Plus, Minus, Search, ChevronLeft, ChevronRight, CheckCircle2, MessageSquarePlus, Loader2, X } from 'lucide-react';
 import Image from 'next/image';
@@ -357,10 +358,16 @@ export function MenuPageContent({
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [selectedFullImage, setSelectedFullImage] = useState<string | null>(null);
 
+  const searchParams = useSearchParams();
+  const dayParam = searchParams.get('day');
+
   // New state for day selection: 'monday' | 'thursday'
-  const defaultDay = getNearestActiveDay(mondayActive, thursdayActive) || 'monday';
+  let initialDayStr = getNearestActiveDay(mondayActive, thursdayActive) || 'monday';
+  if (dayParam === 'monday' && mondayActive) initialDayStr = 'monday';
+  if (dayParam === 'thursday' && thursdayActive) initialDayStr = 'thursday';
+
   const [selectedView, setSelectedView] = useState<'monday' | 'thursday' | 'full'>(
-    defaultDay as 'monday' | 'thursday' | 'full'
+    initialDayStr as 'monday' | 'thursday' | 'full'
   );
 
   // Date Logic
@@ -673,7 +680,7 @@ export function MenuPageContent({
               <p className="text-muted-foreground">Try adjusting your filters or search query.</p>
               <Button
                 variant="link"
-                onClick={() => { setSearchQuery(''); setActiveCategory('all'); setSelectedView(defaultDay as any); }}
+                onClick={() => { setSearchQuery(''); setActiveCategory('all'); setSelectedView(initialDayStr as any); }}
                 className="mt-2 text-emerald"
               >
                 Clear all filters

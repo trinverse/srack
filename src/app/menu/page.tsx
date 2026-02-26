@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { MenuPageContent } from './menu-page-content';
 import { buildGalleryManifest } from '@/lib/image-matcher';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Tiffin Menu',
@@ -81,13 +82,15 @@ export default async function MenuPage() {
     .gt('menu_date', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
 
   return (
-    <MenuPageContent
-      menuItems={enrichedMenuItems}
-      menuActive={menuActive}
-      mondayActive={mondayActive}
-      thursdayActive={thursdayActive}
-      pickupLocations={pickupLocations || []}
-      weeklyMenus={weeklyMenus || []}
-    />
+    <Suspense fallback={<div className="container-wide py-16 text-center">Loading menu...</div>}>
+      <MenuPageContent
+        menuItems={enrichedMenuItems}
+        menuActive={menuActive}
+        mondayActive={mondayActive}
+        thursdayActive={thursdayActive}
+        pickupLocations={pickupLocations || []}
+        weeklyMenus={weeklyMenus || []}
+      />
+    </Suspense>
   );
 }

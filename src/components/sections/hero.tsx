@@ -68,7 +68,7 @@ export function Hero() {
               size="lg"
               className="bg-emerald-500 hover:bg-emerald-400 text-white text-lg font-bold px-8 py-6 rounded-full shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:shadow-emerald-400/50 hover:scale-105 uppercase tracking-wide"
             >
-              <Link href="/menu/monday" prefetch={false}>
+              <Link href="/menu?day=monday" prefetch={false}>
                 Monday Menu
               </Link>
             </Button>
@@ -77,7 +77,7 @@ export function Hero() {
               size="lg"
               className="text-lg font-bold px-8 py-6 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:border-white/40 backdrop-blur-md shadow-lg transition-all duration-300 hover:scale-105 uppercase tracking-wide"
             >
-              <Link href="/menu/thursday" prefetch={false}>
+              <Link href="/menu?day=thursday" prefetch={false}>
                 Thursday Menu
               </Link>
             </Button>
