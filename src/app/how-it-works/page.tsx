@@ -215,7 +215,7 @@ export default function HowItWorksPage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+                className="border-white text-white bg-white/10 hover:bg-white/20 sm:hidden"
               >
                 <a href={`tel:${contactInfo.phone}`}>
                   <Phone className="mr-2 h-5 w-5" />

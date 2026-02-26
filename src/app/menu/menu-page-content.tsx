@@ -722,20 +722,50 @@ export function MenuPageContent({
           <div className="container-wide">
             <h2 className="text-2xl font-bold mb-6 text-center">Pickup Locations</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {pickupLocations.map((location) => (
-                <Card key={location.id} className="p-4">
-                  <h3 className="font-semibold">{location.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {location.address}, {location.city}, {location.state} {location.zip_code}
-                  </p>
-                  {location.pickup_time && (
-                    <p className="text-sm text-emerald mt-2 flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {location.pickup_time}
-                    </p>
-                  )}
-                </Card>
-              ))}
+              {pickupLocations.map((location) => {
+                const fullAddress = `${location.address}, ${location.city}, ${location.state} ${location.zip_code}`;
+                const mapQuery = encodeURIComponent(fullAddress);
+                const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
+                return (
+                  <Card key={location.id} className="overflow-hidden">
+                    {/* Google Map Embed */}
+                    <div className="w-full h-40 bg-muted">
+                      {apiKey ? (
+                        <iframe
+                          width="100%"
+                          height="100%"
+                          style={{ border: 0 }}
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                          src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${mapQuery}&zoom=14`}
+                          title={`Map of ${location.name}`}
+                        />
+                      ) : (
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full h-full flex items-center justify-center text-muted-foreground hover:text-primary transition-colors text-sm"
+                        >
+                          View on Google Maps
+                        </a>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold">{location.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {fullAddress}
+                      </p>
+                      {location.pickup_time && (
+                        <p className="text-sm text-emerald mt-2 flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {location.pickup_time}
+                        </p>
+                      )}
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>

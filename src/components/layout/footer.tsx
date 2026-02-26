@@ -47,12 +47,12 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="bg-emerald text-white">
       <div className="container-wide py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Information */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-background/50">
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-white/50">
               Information
             </h4>
             <ul className="space-y-3">
@@ -60,7 +60,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-background/70 hover:text-accent transition-colors text-sm"
+                    className="text-white/70 hover:text-white transition-colors text-sm"
                   >
                     {item.label}
                   </Link>
@@ -71,7 +71,7 @@ export function Footer() {
 
           {/* Shop */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-background/50">
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-white/50">
               Shop
             </h4>
             <ul className="space-y-3">
@@ -79,7 +79,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-background/70 hover:text-accent transition-colors text-sm"
+                    className="text-white/70 hover:text-white transition-colors text-sm"
                   >
                     {item.label}
                   </Link>
@@ -90,7 +90,7 @@ export function Footer() {
 
           {/* Customer Service */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-background/50">
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-white/50">
               Customer Service
             </h4>
             <ul className="space-y-3">
@@ -98,7 +98,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-background/70 hover:text-accent transition-colors text-sm"
+                    className="text-white/70 hover:text-white transition-colors text-sm"
                   >
                     {item.label}
                   </Link>
@@ -107,7 +107,7 @@ export function Footer() {
               <li>
                 <a
                   href={`tel:${contactInfo.phone}`}
-                  className="flex items-center space-x-2 text-background/70 hover:text-accent transition-colors text-sm"
+                  className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors text-sm"
                 >
                   <Phone className="h-4 w-4" />
                   <span>{contactInfo.phone}</span>
@@ -116,7 +116,7 @@ export function Footer() {
               <li>
                 <a
                   href={`mailto:${contactInfo.email}`}
-                  className="flex items-center space-x-2 text-background/70 hover:text-accent transition-colors text-sm"
+                  className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors text-sm"
                 >
                   <Mail className="h-4 w-4" />
                   <span>{contactInfo.email}</span>
@@ -127,10 +127,10 @@ export function Footer() {
 
           {/* Sign Up for Curry Club */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-background/50">
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-white/50">
               Sign Up for Curry Club
             </h4>
-            <p className="text-background/60 text-sm">
+            <p className="text-white/60 text-sm">
               Sign up for exclusive updates, new arrivals &amp; insider only discounts
             </p>
             <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
@@ -140,12 +140,12 @@ export function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="flex-1 px-3 py-2 rounded-lg bg-background/10 border border-background/20 text-background placeholder:text-background/40 text-sm focus:outline-none focus:ring-1 focus:ring-accent"
+                className="flex-1 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-1 focus:ring-emerald"
               />
               <Button
                 type="submit"
                 size="sm"
-                className="bg-accent hover:bg-accent/90 text-accent-foreground"
+                className="bg-emerald hover:bg-emerald/90 text-white"
               >
                 <Send className="h-4 w-4" />
               </Button>
@@ -159,7 +159,7 @@ export function Footer() {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-background/60 hover:text-accent transition-colors"
+                  className="text-white/60 hover:text-white transition-colors"
                   aria-label={`Follow us on ${social.platform}`}
                 >
                   {social.platform === 'facebook' && <Facebook className="h-5 w-5" />}
@@ -171,18 +171,18 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-background/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p className="text-background/50 text-sm">
+        <div className="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+          <p className="text-white/50 text-sm">
             &copy; {currentYear} {siteConfig.name}. All Rights Reserved.
           </p>
 
           {/* Payment Methods */}
           <div className="flex items-center space-x-3">
-            <span className="text-background/40 text-xs">Payment methods</span>
+            <span className="text-white/40 text-xs">Payment methods</span>
             {paymentMethods.map((method) => (
               <span
                 key={method}
-                className="text-background/50 text-xs bg-background/10 px-2 py-1 rounded"
+                className="text-white/50 text-xs bg-white/10 px-2 py-1 rounded"
               >
                 {method}
               </span>
