@@ -1,43 +1,46 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const WHATSAPP_LINK = 'https://chat.whatsapp.com/FfkXEt9f8ImA4wvLsBUk6A';
 
 export function WhatsAppCTA() {
   return (
-    <section className="py-16 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/20 dark:to-emerald-900/10">
-      <div className="container-tight text-center">
+    <section
+      className="relative py-24 md:py-36 flex items-center justify-center bg-fixed bg-cover bg-center"
+      style={{ backgroundImage: `url('/img/jointhecommunity.png')` }}
+    >
+      {/* Background Overlay (optional, for readability if needed) */}
+      {/* <div className="absolute inset-0 bg-black/10" /> */}
+
+      {/* Content overlay */}
+      <div className="container w-full relative z-10 flex justify-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="max-w-xl mx-auto"
+          className="bg-white p-10 md:p-16 text-center shadow-xl max-w-md w-full mx-4"
         >
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-500 rounded-full mb-6">
-            <MessageCircle className="h-8 w-8 text-white" />
-          </div>
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-extrabold mb-4 text-foreground tracking-tight">
             Join the community!
           </h2>
-          <p className="text-muted-foreground text-lg mb-8">
-            Join our WhatsApp community for menu updates and exclusive VIP access!
+          <p className="text-foreground/80 text-sm md:text-base mb-8 leading-relaxed max-w-[280px] mx-auto font-medium">
+            Scan the QR code to join our WhatsApp community for menu updates and exclusive VIP access!
           </p>
           <Button
             asChild
             size="lg"
-            className="bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-6 text-lg"
+            className="bg-black hover:bg-black/90 text-white font-bold px-10 py-6 rounded-md uppercase tracking-wider text-sm"
           >
             <a
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <MessageCircle className="mr-2 h-5 w-5" />
-              Contact Us on WhatsApp
+              Contact Us
             </a>
           </Button>
         </motion.div>

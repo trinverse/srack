@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const days = [
@@ -10,49 +10,72 @@ const days = [
     title: 'Monday Delivery',
     subtitle: "Today's Special Menu",
     note: 'Order 36 Hours In Advance',
-    href: '/menu/monday',
+    href: '/menu?day=monday',
+    image: '/img/mondayimg.webp',
   },
   {
     title: 'Thursday Delivery',
     subtitle: "Today's Special Menu",
     note: 'Order 36 Hours In Advance',
-    href: '/menu/thursday',
+    href: '/menu?day=thursday',
+    image: '/img/thrusdayimg.webp',
   },
 ];
 
 export function MenuDayCards() {
   return (
-    <section className="py-16 bg-background">
+    <section className="py-24 bg-white">
       <div className="container-wide">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {days.map((day, index) => (
-            <motion.div
-              key={day.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.15 }}
-              className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-8 shadow-lg hover:shadow-xl transition-shadow"
-            >
-              <h3 className="text-2xl font-bold mb-2">{day.title}</h3>
-              <p className="text-primary-foreground/90 text-lg font-medium mb-3">
-                {day.subtitle}
-              </p>
-              <div className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-6">
-                <Clock className="h-4 w-4" />
-                <span>{day.note}</span>
-              </div>
-              <Button
-                asChild
-                className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-bold"
+        <div className="flex flex-col gap-20 max-w-6xl mx-auto">
+          {days.map((day, index) => {
+            const isReverse = index % 2 !== 0; // Odd index (Thursday) text left, image right
+            return (
+              <motion.div
+                key={day.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className={`flex flex-col md:flex-row items-center gap-10 md:gap-16 ${isReverse ? 'md:flex-row-reverse' : ''
+                  }`}
               >
-                <Link href={day.href}>
-                  Order Now
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </motion.div>
-          ))}
+                {/* Image Section */}
+                <div className="w-full md:w-1/2 relative rounded-2xl overflow-hidden shadow-lg">
+                  <Image
+                    src={day.image}
+                    alt={day.title}
+                    width={800}
+                    height={600}
+                    className="w-full h-auto object-contain"
+                    unoptimized={true}
+                  />
+                </div>
+
+                {/* Text Section */}
+                <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left">
+                  <h3 className="text-3xl font-extrabold mb-3 text-foreground tracking-tight">
+                    {day.title}
+                  </h3>
+                  <p className="text-foreground/80 font-semibold text-lg mb-4">
+                    {day.subtitle}
+                  </p>
+                  <p className="text-muted-foreground text-sm mb-8">
+                    {day.note}
+                  </p>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="border-foreground text-foreground rounded-none hover:bg-foreground hover:text-background font-bold uppercase tracking-wider px-8"
+                  >
+                    <Link href={day.href}>
+                      Order Now
+                    </Link>
+                  </Button>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

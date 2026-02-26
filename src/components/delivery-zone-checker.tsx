@@ -114,82 +114,20 @@ export function DeliveryZoneChecker() {
             Do We Deliver to You?
           </h2>
           <p className="text-muted-foreground mb-8">
-            Enter your location or ZIP code to check availability
+            Enter your address
           </p>
-
-          {/* Toggle between address search and ZIP */}
-          <div className="flex justify-center gap-2 mb-6">
-            <button
-              onClick={() => { setInputMode('address'); resetCheck(); }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${inputMode === 'address'
-                ? 'bg-emerald text-white'
-                : 'bg-secondary text-muted-foreground hover:text-foreground'
-                }`}
-            >
-              <Navigation className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
-              Search Address
-            </button>
-            <button
-              onClick={() => { setInputMode('zip'); resetCheck(); }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${inputMode === 'zip'
-                ? 'bg-emerald text-white'
-                : 'bg-secondary text-muted-foreground hover:text-foreground'
-                }`}
-            >
-              <MapPin className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
-              Enter ZIP Code
-            </button>
-          </div>
 
           {/* Input area */}
           <div className="max-w-lg mx-auto">
-            {inputMode === 'address' ? (
-              <GooglePlacesAutocomplete
-                onPlaceSelected={handlePlaceSelected}
-                onClear={resetCheck}
-                placeholder="Enter your address or location..."
-              />
-            ) : (
-              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-                <div className="relative flex-1 w-full">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={5}
-                    value={zipCode}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '');
-                      setZipCode(value);
-                      if (result !== 'idle') setResult('idle');
-                    }}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Enter ZIP code"
-                    className="w-full pl-10 pr-4 py-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald bg-background"
-                  />
-                </div>
-                <Button
-                  onClick={handleZipCheck}
-                  disabled={zipCode.length !== 5 || result === 'loading'}
-                  size="lg"
-                  className="w-full sm:w-auto"
-                >
-                  {result === 'loading' ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Checking...
-                    </>
-                  ) : (
-                    'Check Availability'
-                  )}
-                </Button>
-              </div>
-            )}
+            <GooglePlacesAutocomplete
+              onPlaceSelected={handlePlaceSelected}
+              onClear={resetCheck}
+              placeholder="Enter your address or location..."
+            />
           </div>
 
           {/* Loading state for address mode */}
-          {result === 'loading' && inputMode === 'address' && (
+          {result === 'loading' && (
             <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground">
               <Loader2 className="w-5 h-5 animate-spin" />
               <span>Checking availability...</span>
