@@ -2,36 +2,36 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Users, Send, Phone } from 'lucide-react';
+import { Send, Phone, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cateringTiers } from '@/data/faq';
-import { contactInfo } from '@/data/site';
-import { cn } from '@/lib/utils';
+import { Card, CardContent } from '@/components/ui/card';
+
+
+const CATERING_PDF_URL = 'https://cdn.shopify.com/s/files/1/0670/0554/6579/files/TSRA_Catering-Menu_June2021_F_1.pdf?v=1759867162';
+const CATERING_CONSULTANT_NAME = 'Shreena';
+const CATERING_CONSULTANT_PHONE = '(815) 531-9007';
+
+const eventTypes = [
+  'Sangeet',
+  'Mehndi',
+  'Pujas',
+  'Garba',
+  'Birthdays',
+  'Kitty Parties',
+  'Backyard Parties',
+  'Breakfast & Brunch',
+];
 
 export default function CateringPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    eventDate: '',
-    guestCount: '',
-    eventType: '',
     message: '',
-    selectedPackage: '',
   });
-
-  const handlePackageSelect = (packageId: string) => {
-    setFormData((prev) => ({ ...prev, selectedPackage: packageId }));
-    const formElement = document.getElementById('inquiry-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In production, this would send to an API or form service
     alert('Thank you! We will contact you shortly to discuss your catering needs.');
   };
 
@@ -44,118 +44,45 @@ export default function CateringPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-2xl"
+            className="max-w-3xl"
           >
-            <h1 className="mb-4">Catering Services</h1>
-            <p className="text-muted-foreground text-lg">
-              Bring the authentic flavors of home-style Indian cuisine to your
-              next event. From intimate gatherings to grand celebrations, we
-              create memorable culinary experiences.
-            </p>
+            <h1 className="mb-6 uppercase">Catering</h1>
+            <div className="space-y-4 text-muted-foreground text-lg">
+              <p>
+                We specialize in House parties and Small events:{' '}
+                <strong className="text-foreground">
+                  {eventTypes.join(', ')}.
+                </strong>
+              </p>
+              <p>
+                All catering is done and priced by Tray size &mdash; Small, Medium &amp; Large Trays.
+              </p>
+              <p className="text-foreground font-medium">
+                Call our catering consultant {CATERING_CONSULTANT_NAME} at{' '}
+                <a
+                  href={`tel:${CATERING_CONSULTANT_PHONE.replace(/[^\d+]/g, '')}`}
+                  className="text-primary hover:underline"
+                >
+                  {CATERING_CONSULTANT_PHONE}
+                </a>{' '}
+                for more details &mdash; you can also fill the inquiry below &amp; one of our
+                representatives will reach out to you!
+              </p>
+            </div>
+            <div className="mt-8">
+              <Button asChild size="lg" variant="outline">
+                <a href={CATERING_PDF_URL} target="_blank" rel="noopener noreferrer">
+                  <Download className="mr-2 h-5 w-5" />
+                  Download Catering Menu (PDF)
+                </a>
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Packages */}
-      <section className="py-20">
-        <div className="container-wide">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-4"
-          >
-            Catering Packages
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-center text-muted-foreground text-lg mb-12 max-w-2xl mx-auto"
-          >
-            Choose a package that fits your event size and customize the menu to
-            your preferences.
-          </motion.p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {cateringTiers.map((tier, index) => (
-              <motion.div
-                key={tier.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card
-                  className={cn(
-                    "h-full relative overflow-hidden transition-all duration-300 border-2",
-                    formData.selectedPackage === tier.id
-                      ? "border-emerald-500 shadow-xl ring-4 ring-emerald-500/10 scale-[1.02] bg-emerald-50/10"
-                      : index === 1
-                        ? "border-primary/50 shadow-lg hover:border-border"
-                        : "border-transparent hover:border-border"
-                  )}
-                  onClick={() => handlePackageSelect(tier.id)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {formData.selectedPackage === tier.id && (
-                    <div className="absolute top-0 right-0 bg-emerald-500 text-white px-3 py-1 text-xs font-bold rounded-bl-lg z-10">
-                      Selected
-                    </div>
-                  )}
-                  {index === 1 && formData.selectedPackage !== tier.id && (
-                    <div className="bg-primary text-primary-foreground text-center py-2 text-sm font-medium">
-                      Most Popular
-                    </div>
-                  )}
-                  <CardHeader>
-                    <div className="flex items-center gap-3 mb-2">
-                      <Users className="h-6 w-6 text-primary" />
-                      <span className="text-sm text-muted-foreground">
-                        {tier.minGuests}-{tier.maxGuests} guests
-                      </span>
-                    </div>
-                    <CardTitle className="text-2xl">{tier.name}</CardTitle>
-                    <p className="text-muted-foreground">{tier.description}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="mb-6">
-                      <span className="text-4xl font-bold text-primary">
-                        ${tier.pricePerPerson}
-                      </span>
-                      <span className="text-muted-foreground">/person</span>
-                    </div>
-                    <ul className="space-y-3">
-                      {tier.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-8">
-                      <Button
-                        variant={formData.selectedPackage === tier.id ? "default" : "outline"}
-                        className={cn("w-full transition-all", formData.selectedPackage === tier.id ? "bg-emerald-500 hover:bg-emerald-600 text-white" : "")}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePackageSelect(tier.id);
-                        }}
-                      >
-                        {formData.selectedPackage === tier.id ? "Package Selected" : "Select Package"}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Inquiry Form */}
-      <section className="py-20 bg-secondary/50">
+      <section className="py-20">
         <div className="container-tight">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -163,7 +90,7 @@ export default function CateringPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="mb-4">Request a Quote</h2>
+            <h2 className="mb-4">Catering Inquiry</h2>
             <p className="text-muted-foreground text-lg">
               Tell us about your event and we&apos;ll create a customized proposal.
             </p>
@@ -181,7 +108,7 @@ export default function CateringPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium mb-2">
-                        Your Name *
+                        Your name
                       </label>
                       <input
                         type="text"
@@ -195,7 +122,7 @@ export default function CateringPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">
-                        Email Address *
+                        Your email
                       </label>
                       <input
                         type="email"
@@ -207,91 +134,23 @@ export default function CateringPage() {
                         className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Phone Number *
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={formData.phone}
-                        onChange={(e) =>
-                          setFormData({ ...formData, phone: e.target.value })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Event Date *
-                      </label>
-                      <input
-                        type="date"
-                        required
-                        value={formData.eventDate}
-                        onChange={(e) =>
-                          setFormData({ ...formData, eventDate: e.target.value })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Estimated Guest Count *
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        min="15"
-                        value={formData.guestCount}
-                        onChange={(e) =>
-                          setFormData({ ...formData, guestCount: e.target.value })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Event Type
-                      </label>
-                      <select
-                        value={formData.eventType}
-                        onChange={(e) =>
-                          setFormData({ ...formData, eventType: e.target.value })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                      >
-                        <option value="">Select event type</option>
-                        <option value="wedding">Wedding</option>
-                        <option value="corporate">Corporate Event</option>
-                        <option value="birthday">Birthday Party</option>
-                        <option value="anniversary">Anniversary</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Selected Package
-                      </label>
-                      <select
-                        value={formData.selectedPackage}
-                        onChange={(e) =>
-                          setFormData({ ...formData, selectedPackage: e.target.value })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                      >
-                        <option value="">No package selected</option>
-                        {cateringTiers.map(t => (
-                          <option key={t.id} value={t.id}>
-                            {t.name} (${t.pricePerPerson}/person)
-                          </option>
-                        ))}
-                      </select>
-                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">
-                      Additional Details
+                      Your phone (optional)
+                    </label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                      className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Your message
                     </label>
                     <textarea
                       rows={4}
@@ -306,12 +165,12 @@ export default function CateringPage() {
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button type="submit" size="lg" className="flex-1">
                       <Send className="mr-2 h-5 w-5" />
-                      Submit Inquiry
+                      Send Message
                     </Button>
                     <Button asChild variant="outline" size="lg">
-                      <a href={`tel:${contactInfo.phone}`}>
+                      <a href={`tel:${CATERING_CONSULTANT_PHONE.replace(/[^\d+]/g, '')}`}>
                         <Phone className="mr-2 h-5 w-5" />
-                        Call Us
+                        Call {CATERING_CONSULTANT_NAME}
                       </a>
                     </Button>
                   </div>

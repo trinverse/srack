@@ -20,7 +20,7 @@ export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: '',
+    phone: '',
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
@@ -200,7 +200,7 @@ export default function ContactPage() {
                           setFormData({
                             name: '',
                             email: '',
-                            subject: '',
+                            phone: '',
                             message: '',
                           });
                         }}
@@ -244,25 +244,19 @@ export default function ContactPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-2">
-                            Subject
+                            Your Phone (optional)
                           </label>
-                          <select
-                            value={formData.subject}
+                          <input
+                            type="tel"
+                            value={formData.phone}
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
-                                subject: e.target.value,
+                                phone: e.target.value,
                               })
                             }
                             className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                          >
-                            <option value="">Select a topic</option>
-                            <option value="order">Order Question</option>
-                            <option value="menu">Menu Inquiry</option>
-                            <option value="catering">Catering</option>
-                            <option value="feedback">Feedback</option>
-                            <option value="other">Other</option>
-                          </select>
+                          />
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-2">

@@ -1,64 +1,55 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Flame, Leaf, Heart, Shield } from 'lucide-react';
-import { features } from '@/data/site';
-
-const iconMap = {
-  flame: Flame,
-  leaf: Leaf,
-  heart: Heart,
-  shield: Shield,
-};
+import { qualityHighlights } from '@/data/site';
 
 export function Features() {
   return (
     <section className="py-24 bg-secondary/50">
       <div className="container-wide">
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mb-4"
-          >
-            Why Choose Us
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-muted-foreground text-lg"
-          >
-            We bring the warmth of home-cooked Indian meals to your table,
-            with the care and quality you deserve.
-          </motion.p>
-        </div>
+        <div className="max-w-4xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-12">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="mb-3"
+            >
+              True Indian Cuisine, Crafted with Tradition
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-muted-foreground text-lg"
+            >
+              Authentic spices, freshly cooked
+            </motion.p>
+          </div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => {
-            const Icon = iconMap[feature.icon as keyof typeof iconMap];
-            return (
+          {/* Quality Highlights */}
+          <div className="space-y-5">
+            {qualityHighlights.map((item, index) => (
               <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                key={item.title}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-background rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow"
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+                className="flex items-start gap-4 bg-background rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
-                  <Icon className="h-6 w-6 text-primary" />
+                <span className="text-2xl shrink-0 mt-0.5">{item.emoji}</span>
+                <div>
+                  <span className="font-bold text-foreground">{item.title}</span>
+                  {' \u2014 '}
+                  <span className="text-muted-foreground">{item.description}</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
               </motion.div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
     </section>

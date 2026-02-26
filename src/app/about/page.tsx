@@ -8,28 +8,28 @@ import Link from 'next/link';
 
 const values = [
   {
-    icon: Heart,
-    title: 'Made with Love',
+    icon: Clock,
+    title: 'Freshly Cooked on Delivery Day',
     description:
-      'Every dish is crafted with the same care and attention we would give our own family meals.',
+      'Every meal is prepared the same day it\u2019s delivered for peak freshness and taste.',
   },
   {
     icon: Leaf,
-    title: 'Fresh Ingredients',
+    title: 'No Frozen or Canned Ingredients',
     description:
-      'We source the freshest vegetables and quality proteins, cutting everything by hand daily.',
+      'We use freshly cut vegetables, natural herbs, and whole spices to retain full flavor and nutrition.',
+  },
+  {
+    icon: Heart,
+    title: 'No Artificial Colours or Flavour Enhancers',
+    description:
+      'Our meals are naturally delicious, made without shortcuts.',
   },
   {
     icon: ChefHat,
-    title: 'Authentic Recipes',
+    title: 'Mindful Cooking',
     description:
-      'Our recipes have been passed down through generations, preserving the true taste of home.',
-  },
-  {
-    icon: Clock,
-    title: 'Same-Day Fresh',
-    description:
-      'Nothing is pre-made or frozen. Every meal is prepared fresh on delivery day.',
+      'Our dishes are balanced and thoughtfully prepared\u2014never overloaded with salt, oil, or ghee.',
   },
 ];
 
@@ -46,11 +46,14 @@ export default function AboutPage() {
             transition={{ duration: 0.5 }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Story</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">About</h1>
             <p className="text-lg text-muted-foreground mb-8">
-              The Spice Rack Atlanta was born from a simple mission: to bring the authentic
-              taste of home-cooked Indian meals to busy families across Atlanta who miss the
-              comfort of traditional cooking.
+              Welcome to The Spice Rack, Atlanta, where authentic Indian home-style cooking
+              meets professional care and quality. Since 2014, we&apos;ve been proudly serving
+              fresh, wholesome meals prepared by licensed culinary professionals. Our rotating
+              menu offers something new each week, so you&apos;ll never get bored of eating well.
+              We deliver twice a week&mdash;Mondays and Thursdays&mdash;ensuring every dish
+              arrives fresh and ready to enjoy.
             </p>
           </motion.div>
         </div>
@@ -97,7 +100,7 @@ export default function AboutPage() {
                 <div className="text-center p-8">
                   <ChefHat className="w-24 h-24 text-emerald mx-auto mb-4" />
                   <p className="text-lg font-medium">Cooking with Tradition</p>
-                  <p className="text-muted-foreground">Since 2020</p>
+                  <p className="text-muted-foreground">Since 2014</p>
                 </div>
               </div>
             </motion.div>
@@ -115,10 +118,9 @@ export default function AboutPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl font-bold mb-4">What We Stand For</h2>
+            <h2 className="text-3xl font-bold mb-4">What Sets Us Apart</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our values guide everything we do, from sourcing ingredients to delivering
-              your meals.
+              At The Spice Rack, we focus on purity, tradition, and health.
             </p>
           </motion.div>
 

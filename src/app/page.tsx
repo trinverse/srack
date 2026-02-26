@@ -5,6 +5,8 @@ import {
   Testimonials,
   CTA,
   WelcomeOffer,
+  MenuDayCards,
+  WhatsAppCTA,
 } from '@/components/sections';
 import { DeliveryZoneChecker } from '@/components/delivery-zone-checker';
 
@@ -13,10 +15,12 @@ export default async function Home() {
     <>
       <Hero />
       <WelcomeOffer />
-      <DeliveryZoneChecker />
-      <Features />
       <HowItWorksPreview />
+      <Features />
+      <MenuDayCards />
+      <DeliveryZoneChecker />
       <Testimonials />
+      <WhatsAppCTA />
       <CTA />
     </>
   );

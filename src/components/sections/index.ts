@@ -5,3 +5,5 @@ export { HowItWorksPreview } from './how-it-works-preview';
 export { Testimonials } from './testimonials';
 export { CTA } from './cta';
 export { WelcomeOffer } from './welcome-offer';
+export { MenuDayCards } from './menu-day-cards';
+export { WhatsAppCTA } from './whatsapp-cta';

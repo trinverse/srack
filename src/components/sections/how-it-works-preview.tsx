@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Search, ShoppingCart, Truck } from 'lucide-react';
+import { ArrowRight, ShoppingCart, ChefHat, Truck, Flame } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { howItWorks } from '@/data/site';
 
-const icons = [Search, ShoppingCart, Truck];
+const icons = [ShoppingCart, ChefHat, Truck, Flame];
 
 export function HowItWorksPreview() {
   return (
@@ -21,7 +21,7 @@ export function HowItWorksPreview() {
             transition={{ duration: 0.5 }}
             className="mb-4 text-primary-foreground"
           >
-            How It Works
+            Delicious Meals, Delivered Simply
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -31,12 +31,12 @@ export function HowItWorksPreview() {
             className="text-primary-foreground/80 text-lg"
           >
             Getting delicious home-style Indian food is simple.
-            Three easy steps to your next meal.
+            Four easy steps to your next meal.
           </motion.p>
         </div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-12">
           {howItWorks.map((step, index) => {
             const Icon = icons[index];
             return (
@@ -50,7 +50,7 @@ export function HowItWorksPreview() {
               >
                 {/* Connector line */}
                 {index < howItWorks.length - 1 && (
-                  <div className="hidden md:block absolute top-12 left-1/2 w-full h-0.5 bg-primary-foreground/20" />
+                  <div className="hidden lg:block absolute top-12 left-1/2 w-full h-0.5 bg-primary-foreground/20" />
                 )}
 
                 {/* Step number with icon */}
@@ -64,7 +64,7 @@ export function HowItWorksPreview() {
                 <h3 className="text-xl font-semibold mb-3 text-primary-foreground">
                   {step.title}
                 </h3>
-                <p className="text-primary-foreground/70">{step.description}</p>
+                <p className="text-primary-foreground/70 text-sm">{step.description}</p>
               </motion.div>
             );
           })}

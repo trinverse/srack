@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Phone, Mail } from 'lucide-react';
@@ -14,15 +15,26 @@ import { faqItems } from '@/data/faq';
 import { contactInfo } from '@/data/site';
 import { FAQCategory } from '@/types';
 
-const categories: { key: FAQCategory; label: string }[] = [
-  { key: 'ordering', label: 'Ordering' },
-  { key: 'delivery', label: 'Delivery' },
-  { key: 'dietary', label: 'Dietary' },
-  { key: 'payments', label: 'Payments' },
+const categories: { key: FAQCategory | 'all'; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'ordering', label: 'About Our Tiffin Service' },
+  { key: 'dietary', label: 'Meal Options & Dietary' },
+  { key: 'delivery', label: 'Ordering & Delivery' },
+  { key: 'payments', label: 'Payments & Billing' },
+  { key: 'subscription', label: 'Subscription (Curry Club)' },
+  { key: 'account', label: 'Account Management' },
   { key: 'catering', label: 'Catering' },
 ];
 
 export default function FAQPage() {
+  const [activeFilter, setActiveFilter] = useState<FAQCategory | 'all'>('all');
+
+  const filteredCategories = categories.filter((c) => c.key !== 'all');
+  const visibleCategories =
+    activeFilter === 'all'
+      ? filteredCategories
+      : filteredCategories.filter((c) => c.key === activeFilter);
+
   return (
     <div className="pt-20">
       {/* Hero */}
@@ -34,7 +46,7 @@ export default function FAQPage() {
             transition={{ duration: 0.5 }}
             className="max-w-2xl"
           >
-            <h1 className="mb-4">Frequently Asked Questions</h1>
+            <h1 className="mb-4">FAQs</h1>
             <p className="text-muted-foreground text-lg">
               Find answers to common questions about our tiffin service,
               delivery, and catering options.
@@ -43,10 +55,34 @@ export default function FAQPage() {
         </div>
       </section>
 
+      {/* Topic Filter */}
+      <section className="py-6 border-b">
+        <div className="container-tight">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-sm text-muted-foreground font-medium shrink-0">
+              Filter by topic
+            </span>
+            {categories.map((cat) => (
+              <button
+                key={cat.key}
+                onClick={() => setActiveFilter(cat.key)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  activeFilter === cat.key
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary text-foreground hover:bg-secondary/80'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Section */}
       <section className="py-20">
         <div className="container-tight">
-          {categories.map((category, catIndex) => {
+          {visibleCategories.map((category, catIndex) => {
             const categoryFaqs = faqItems.filter(
               (item) => item.category === category.key
             );
@@ -61,7 +97,7 @@ export default function FAQPage() {
                 transition={{ delay: catIndex * 0.1 }}
                 className="mb-12 last:mb-0"
               >
-                <h2 className="text-2xl font-semibold mb-6 text-primary">
+                <h2 className="text-2xl font-semibold mb-6 text-primary uppercase tracking-wide">
                   {category.label}
                 </h2>
                 <Accordion type="single" collapsible className="space-y-4">

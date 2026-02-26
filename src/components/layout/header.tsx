@@ -4,18 +4,16 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { Menu, ShoppingCart, User, LogOut, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { navigation, siteConfig } from '@/data/site';
+import { navigation } from '@/data/site';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/auth-context';
 import { useCart } from '@/context/cart-context';
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuHovered, setIsMenuHovered] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, customer, isLoading, signOut, isStaff } = useAuth();
   const { state: cartState } = useCart();
@@ -25,7 +23,6 @@ export function Header() {
   const isHomePage = pathname === '/';
   const isHeroVisible = isHomePage && !isScrolled;
 
-  // Hide header on admin routes (admin has its own navigation)
   const isAdminRoute = pathname.startsWith('/admin');
 
   useEffect(() => {
@@ -43,173 +40,99 @@ export function Header() {
     router.refresh();
   };
 
-  // Don't render on admin routes
   if (isAdminRoute) {
     return null;
   }
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
+    <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isScrolled
-          ? 'bg-background/80 backdrop-blur-md shadow-sm border-b border-white/20'
+          ? 'bg-background/95 backdrop-blur-md shadow-sm border-b'
           : isHeroVisible
-            ? 'bg-black/20 backdrop-blur-sm border-b border-white/10'
-            : 'bg-background/40 backdrop-blur-sm border-b border-border/40 shadow-sm'
+            ? 'bg-black/30 backdrop-blur-sm'
+            : 'bg-background/95 backdrop-blur-sm border-b shadow-sm'
       )}
     >
-      <nav className="container-wide">
-        <div className="flex items-center justify-between h-20">
+      {/* Top bar with logo + account actions */}
+      <div className="container-wide">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 z-50">
+          <Link href="/" className="flex items-center space-x-3">
             <Image
               src="/menu-images/logo.png"
               alt="The Spice Rack Atlanta Logo"
-              width={68}
-              height={68}
-              className={cn(
-                "object-contain drop-shadow-md origin-left transition-all duration-300",
-                isScrolled || isMenuHovered ? "scale-90" : "scale-110"
-              )}
+              width={52}
+              height={52}
+              className="object-contain drop-shadow-md"
               priority
               quality={60}
               unoptimized={process.env.NODE_ENV === 'development'}
             />
             <span className={cn(
-              'font-bold transition-all duration-300 leading-tight',
-              isScrolled || isMenuHovered ? 'text-base md:text-lg' : 'text-xl md:text-2xl',
-              isHeroVisible ? 'text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]' : 'text-primary'
+              'font-bold text-lg leading-tight',
+              isHeroVisible ? 'text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]' : 'text-foreground'
             )}>
-              <span className="md:hidden">The Spice<br />Rack Atlanta</span>
-              <span className="hidden md:inline whitespace-nowrap">The Spice Rack Atlanta</span>
+              The Spice Rack Atlanta
             </span>
           </Link>
 
-          {/* Right Section Wrapper */}
-          <div className="hidden md:flex items-center gap-4">
-            {/* Desktop Navigation */}
-            <div
-              className={cn(
-                "flex items-center rounded-full transition-all duration-500 overflow-hidden group border",
-                isHeroVisible
-                  ? "bg-emerald-950/40 backdrop-blur-xl border-white/10 shadow-lg text-white"
-                  : "bg-emerald-500/10 backdrop-blur-xl border-emerald-500/20 shadow-sm text-primary"
-              )}
-              onMouseEnter={() => setIsMenuHovered(true)}
-              onMouseLeave={() => setIsMenuHovered(false)}
-            >
-              <div className="px-6 py-2.5 font-bold flex items-center gap-2 cursor-pointer transition-colors">
-                <Menu className="w-5 h-5" />
-                <span>Menu</span>
-              </div>
+          {/* Desktop right actions */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Admin Link */}
+            {!isLoading && isStaff && (
+              <Button asChild variant="ghost" size="sm" className={cn("rounded-full font-medium", isHeroVisible && 'text-white hover:bg-white/10')}>
+                <Link href="/admin" className="flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  Admin
+                </Link>
+              </Button>
+            )}
 
-              <div className="overflow-hidden max-w-0 opacity-0 group-hover:max-w-[700px] group-hover:opacity-100 transition-all duration-700 ease-in-out">
-                <div className="flex items-center space-x-1 px-2 pr-4 whitespace-nowrap py-1">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      prefetch={false}
-                      className={cn(
-                        'px-4 py-2 text-sm font-bold rounded-full transition-all duration-300',
-                        isHeroVisible
-                          ? 'text-white/90 hover:text-white hover:bg-emerald-500/40 hover:shadow-inner'
-                          : 'text-primary/80 hover:text-primary hover:bg-emerald-500/20'
-                      )}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right side actions */}
-            <div className={cn(
-              "flex items-center rounded-full transition-all duration-500 overflow-hidden group border",
-              isHeroVisible
-                ? "bg-emerald-950/40 backdrop-blur-xl border-white/10 shadow-lg text-white"
-                : "bg-emerald-500/10 backdrop-blur-xl border-emerald-500/20 shadow-sm text-primary"
-            )}>
-              <div className="overflow-hidden max-w-0 opacity-0 group-hover:max-w-[700px] group-hover:opacity-100 transition-all duration-700 ease-in-out">
-                <div className="flex items-center gap-1 px-2 pl-4 whitespace-nowrap py-1">
-                  {/* Cart */}
-                  <Button asChild variant="ghost" size="icon" className={cn('relative rounded-full hover:bg-emerald-500/20', isHeroVisible && 'text-white hover:bg-emerald-500/40')}>
-                    <Link href="/cart">
-                      <ShoppingCart className="h-5 w-5 drop-shadow-sm" />
-                      {itemCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center shadow-md">
-                          {itemCount}
-                        </span>
-                      )}
-                    </Link>
-                  </Button>
-
-                  {/* Admin Link for Staff */}
-                  {!isLoading && isStaff && (
-                    <Button asChild variant="ghost" size="sm" className={cn("rounded-full font-bold", isHeroVisible && 'text-white hover:bg-emerald-500/40')}>
-                      <Link href="/admin" className="flex items-center gap-2 drop-shadow-sm">
-                        <Shield className="h-4 w-4" />
-                        <span>Admin</span>
+            {/* Auth */}
+            {!isLoading && (
+              <>
+                {(customer || user) ? (
+                  <div className="flex items-center gap-2">
+                    <Button asChild variant="ghost" size="sm" className={cn("rounded-full font-medium", isHeroVisible && 'text-white hover:bg-white/10')}>
+                      <Link href="/account" className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        {customer?.full_name?.split(' ')[0] || 'Account'}
                       </Link>
                     </Button>
-                  )}
+                    <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sign out" className={cn("rounded-full h-8 w-8", isHeroVisible && 'text-white hover:bg-white/10')}>
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Button asChild variant="ghost" size="sm" className={cn("rounded-full font-medium", isHeroVisible && 'text-white hover:bg-white/10')}>
+                      <Link href="/login">Sign In</Link>
+                    </Button>
+                    <Button asChild size="sm" className="rounded-full font-medium">
+                      <Link href="/signup">Sign Up</Link>
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
 
-                  {/* Auth Details */}
-                  {!isLoading && (
-                    <>
-                      {(customer || user) ? (
-                        <div className="flex items-center gap-1">
-                          {!isStaff && (
-                            <span className={cn("px-3 text-sm font-bold", isHeroVisible ? "text-white/90" : "text-primary")}>
-                              Hi, {customer?.full_name?.split(' ')[0] || user?.user_metadata?.full_name?.split(' ')[0]}
-                            </span>
-                          )}
-                          <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sign out" className={cn("rounded-full", isHeroVisible && 'text-white hover:bg-emerald-500/40 drop-shadow-sm')}>
-                            <LogOut className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1">
-                          <Button asChild variant="ghost" size="sm" className={cn("rounded-full font-bold", isHeroVisible && 'text-white hover:bg-emerald-500/40 drop-shadow-sm')}>
-                            <Link href="/login">Sign In</Link>
-                          </Button>
-                          <Button asChild size="sm" className="rounded-full shadow-md font-bold hover:scale-105 transition-transform">
-                            <Link href="/signup">Sign Up</Link>
-                          </Button>
-                        </div>
-                      )}
-                    </>
-                  )}
-
-                  {/* Order Now CTA */}
-                  <Button asChild className="bg-primary hover:bg-primary/90 ml-1 rounded-full shadow-md font-bold px-6 hover:scale-105 transition-transform">
-                    <Link href="/menu">Order Now</Link>
-                  </Button>
-                </div>
-              </div>
-
-              {/* Main Right Trigger */}
-              <Link
-                href={(customer || user) ? "/account" : "/login"}
-                prefetch={false}
-                className="px-4 lg:px-6 py-2.5 font-bold flex items-center gap-2 cursor-pointer transition-colors whitespace-nowrap"
-              >
-                <User className="w-4 h-4 md:w-5 md:h-5" />
-                <span className={cn("transition-all duration-300", isScrolled ? "text-xs md:text-sm" : "text-sm md:text-base")}>
-                  {(customer || user) ? "Account" : "Sign In"}
-                </span>
+            {/* Cart */}
+            <Button asChild variant="ghost" size="icon" className={cn('relative rounded-full', isHeroVisible && 'text-white hover:bg-white/10')}>
+              <Link href="/cart">
+                <ShoppingCart className="h-5 w-5" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+                    {itemCount}
+                  </span>
+                )}
               </Link>
-            </div>
+            </Button>
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile right actions */}
           <div className="flex items-center gap-2 md:hidden">
-            {/* Mobile Cart */}
             <Button asChild variant="ghost" size="icon" className={cn('relative', isHeroVisible && 'text-white hover:bg-white/10')}>
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
@@ -312,7 +235,39 @@ export function Header() {
             </Sheet>
           </div>
         </div>
+      </div>
+
+      {/* Desktop navigation bar — always visible */}
+      <nav className={cn(
+        'hidden md:block border-t transition-colors',
+        isHeroVisible
+          ? 'border-white/10 bg-black/20'
+          : 'border-border/30'
+      )}>
+        <div className="container-wide">
+          <div className="flex items-center justify-center gap-1 py-2">
+            {navigation.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                prefetch={false}
+                className={cn(
+                  'px-4 py-2 text-sm font-semibold rounded-full transition-colors',
+                  pathname === item.href
+                    ? isHeroVisible
+                      ? 'bg-white/20 text-white'
+                      : 'bg-primary/10 text-primary'
+                    : isHeroVisible
+                      ? 'text-white/80 hover:text-white hover:bg-white/10'
+                      : 'text-foreground/70 hover:text-foreground hover:bg-secondary'
+                )}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </nav>
-    </motion.header>
+    </header>
   );
 }

@@ -3,9 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, Clock, Leaf } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { siteConfig } from '@/data/site';
 
 export function Hero() {
   return (
@@ -42,56 +41,45 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-balance mb-6 text-white text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]"
+            className="text-balance mb-4 text-white text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight uppercase drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]"
           >
-            Taste the Love of{' '}
-            <span className="text-emerald-400">Home Cooking</span>
+            Tiffin-Dabba &amp; Catering Services
           </motion.h1>
 
           {/* Subheadline */}
-          <motion.p
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg md:text-xl lg:text-2xl text-white/90 font-medium max-w-2xl mx-auto mb-8 text-balance drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]"
+            className="text-xl md:text-2xl lg:text-3xl text-emerald-400 font-bold max-w-3xl mx-auto mb-10 text-balance drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)] uppercase tracking-wide"
           >
-            {siteConfig.description}
-          </motion.p>
-
-          {/* Delivery info */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex items-center justify-center space-x-2 text-white/90 mb-10 font-medium bg-black/30 w-fit mx-auto px-5 py-2.5 rounded-full border border-white/10"
-          >
-            <Clock className="h-5 w-5 text-emerald-400 drop-shadow-sm" />
-            <span>Delivered fresh on Mondays &amp; Thursdays</span>
-          </motion.div>
+            Spice Up Your Day with Authentic Indian Meals
+          </motion.h2>
 
           {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <Button
               asChild
               size="lg"
-              className="bg-emerald-500 hover:bg-emerald-400 text-white text-lg font-bold px-8 py-6 rounded-full shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:shadow-emerald-400/50 hover:scale-105"
+              className="bg-emerald-500 hover:bg-emerald-400 text-white text-lg font-bold px-8 py-6 rounded-full shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:shadow-emerald-400/50 hover:scale-105 uppercase tracking-wide"
             >
-              <Link href="/menu" prefetch={false}>
-                View This Week&apos;s Menu
-                <ArrowRight className="ml-2 h-5 w-5" />
+              <Link href="/menu/monday" prefetch={false}>
+                Monday Menu
               </Link>
             </Button>
             <Button
               asChild
               size="lg"
-              className="text-lg font-bold px-8 py-6 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:border-white/40 backdrop-blur-md shadow-lg transition-all duration-300 hover:scale-105"
+              className="text-lg font-bold px-8 py-6 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:border-white/40 backdrop-blur-md shadow-lg transition-all duration-300 hover:scale-105 uppercase tracking-wide"
             >
-              <Link href="/how-it-works" prefetch={false}>How It Works</Link>
+              <Link href="/menu/thursday" prefetch={false}>
+                Thursday Menu
+              </Link>
             </Button>
           </motion.div>
         </div>

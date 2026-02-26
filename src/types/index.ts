@@ -55,7 +55,9 @@ export type FAQCategory =
   | 'delivery'
   | 'dietary'
   | 'payments'
-  | 'catering';
+  | 'catering'
+  | 'subscription'
+  | 'account';
 
 // Catering
 export interface CateringTier {
