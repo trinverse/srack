@@ -64,9 +64,9 @@ export function MenuDayCards() {
                   </p>
                   <Button
                     asChild
-                    variant="outline"
+                    variant="default"
                     size="lg"
-                    className="border-foreground text-foreground rounded-none hover:bg-foreground hover:text-background font-bold uppercase tracking-wider px-8"
+                    className="bg-emerald text-white rounded-none hover:bg-emerald/90 font-bold uppercase tracking-wider px-8"
                   >
                     <Link href={day.href}>
                       Order Now
