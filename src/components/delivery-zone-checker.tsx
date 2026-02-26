@@ -245,18 +245,20 @@ export function DeliveryZoneChecker() {
             </div>
           )}
 
-          {/* Result: Nothing available */}
+          {/* Result: Unavailable */}
           {result === 'unavailable' && (
-            <div className="mt-8 p-6 bg-destructive/10 border border-destructive/20 rounded-xl animate-in fade-in slide-in-from-bottom-4">
-              <div className="flex items-center justify-center gap-3 text-destructive">
+            <div className="mt-8 p-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-xl animate-in fade-in slide-in-from-bottom-4">
+              <div className="flex items-center justify-center gap-3 text-red-600 dark:text-red-400 mb-4">
                 <XCircle className="w-6 h-6" />
-                <span className="text-lg font-semibold">Sorry, we don&apos;t serve this area yet</span>
+                <span className="text-lg font-semibold">We don't serve this area yet</span>
               </div>
-              <p className="mt-2 text-muted-foreground">
-                We&apos;re expanding! Check back soon or contact us for catering options.
+              <p className="text-muted-foreground mb-6">
+                Sorry, we currently don't offer delivery or pickup for this ZIP code. Join our waitlist to be notified when we expand to your area!
               </p>
-              <Button variant="outline" className="mt-4" asChild>
-                <Link href="/contact">Contact Us</Link>
+              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto px-8 text-foreground border-border hover:bg-secondary">
+                <Link href="/contact">
+                  Join Waitlist
+                </Link>
               </Button>
             </div>
           )}
