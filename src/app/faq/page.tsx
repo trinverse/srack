@@ -110,7 +110,7 @@ export default function FAQPage() {
                       <AccordionTrigger className="text-left hover:no-underline py-5">
                         <span className="font-medium">{faq.question}</span>
                       </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground pb-5">
+                      <AccordionContent className="text-muted-foreground pb-5 whitespace-pre-line">
                         {faq.answer}
                       </AccordionContent>
                     </AccordionItem>

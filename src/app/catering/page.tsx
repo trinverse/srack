@@ -44,7 +44,7 @@ export default function CateringPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-3xl"
+            className="max-w-3xl mx-auto text-center"
           >
             <h1 className="mb-6 uppercase">Catering</h1>
             <div className="space-y-4 text-muted-foreground text-lg">

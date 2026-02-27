@@ -28,7 +28,7 @@ export function WhatsAppCTA() {
             Join the community!
           </h2>
           <p className="text-foreground/80 text-sm md:text-base mb-8 leading-relaxed max-w-[280px] mx-auto font-medium">
-            Scan the QR code to join our WhatsApp community for menu updates and exclusive VIP access!
+            Click the link below to join our WhatsApp community!
           </p>
           <Button
             asChild
@@ -40,7 +40,7 @@ export function WhatsAppCTA() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Contact Us
+              Join Now
             </a>
           </Button>
         </motion.div>

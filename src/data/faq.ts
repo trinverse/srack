@@ -5,7 +5,7 @@ export const faqItems: FAQItem[] = [
     id: 'how-to-order',
     question: 'How do I place an order?',
     answer:
-      'You can place an order through our website or by calling us directly. Simply browse our weekly menu, select your items, and checkout. Orders must be placed at least 36 hours before the delivery day.',
+      'You can place an order through our website. Simply browse our weekly menu, select your items, and checkout. Orders must be placed at least 36 hours before the delivery day.',
     category: 'ordering',
   },
   {
@@ -19,14 +19,14 @@ export const faqItems: FAQItem[] = [
     id: 'delivery-areas',
     question: 'What areas do you deliver to?',
     answer:
-      'We currently deliver to the greater Atlanta metro area, including Alpharetta, Roswell, Johns Creek, Duluth, Suwanee, and surrounding neighborhoods. Contact us to confirm if we deliver to your area.',
+      'We currently deliver to the Greater Atlanta metro area, including Sandy Springs, Dunwoody, parts of Marietta, and Smyrna. Put in your address to see if we deliver.',
     category: 'delivery',
   },
   {
     id: 'order-deadline',
     question: 'What is the order deadline?',
     answer:
-      'Orders must be placed at least 36 hours before the delivery day. For Monday deliveries, order by Saturday 6:00 PM. For Thursday deliveries, order by Tuesday 6:00 PM.',
+      'Orders must be placed at least 36 hours before the delivery day. For Monday deliveries, order by Sunday 12:00 PM. For Thursday deliveries, order by Wednesday 12:00 PM.',
     category: 'ordering',
   },
   {
@@ -76,7 +76,7 @@ export const faqItems: FAQItem[] = [
     id: 'pickup-locations',
     question: 'What are your pickup locations?',
     answer:
-      'Costco Sandy Springs: 6350 Peachtree Dunwoody Road, Atlanta, GA 30328 (5:30 PM \u2013 6:00 PM) | Avenue at East Cobb: 4475 Roswell Road, Marietta, GA 30062 (6:30 PM \u2013 7:00 PM) | Cumberland Mall Costco: 2900 Cumberland Mall, Atlanta, GA 30339 (7:30 PM \u2013 8:00 PM) | Alpharetta Costco: 2855 Jordan Ct, Alpharetta, GA 30004 (5:30 PM \u2013 6:00 PM) | Walmart near Patel Brothers Suwanee: 2395 Peachtree Parkway, Cumming, GA 30041 (6:30 PM \u2013 7:00 PM) | Desi Brother Plaza Duluth: 2255 Pleasant Hill Road, Duluth, GA 30096 (7:30 PM \u2013 8:00 PM)',
+      '• Costco Sandy Springs — 6350 Peachtree Dunwoody Rd, Atlanta, GA 30328 (5:30 – 6:00 PM)\n• Avenue at East Cobb — 4363 Roswell Road, Marietta, GA 30062 (6:30 – 7:00 PM)\n• Costco Cumberland Mall — 2900 Cumberland Mall, Atlanta, GA 30339 (7:30 – 8:00 PM)\n• Costco Alpharetta — 2855 Jordan Ct, Alpharetta, GA 30004 (5:30 – 6:00 PM)\n• Walmart Cumming — 2395 Peachtree Pkwy, Cumming, GA 30041 (6:30 – 7:00 PM)\n• Desi Plaza Duluth — 2255 Pleasant Hill Rd, Duluth, GA 30096 (7:30 – 8:00 PM)\n• Decatur QT — 1910 Lawrenceville Hwy, Decatur, GA 30033 (3:30 – 4:00 PM)',
     category: 'delivery',
   },
   {
@@ -88,9 +88,9 @@ export const faqItems: FAQItem[] = [
   },
   {
     id: 'advance-order',
-    question: 'Why do you require 48-hour advance orders?',
+    question: 'Why do you require 36-hour advance orders?',
     answer:
-      'Our meals are cooked fresh on the day of delivery. We require 48 hours to source fresh ingredients and complete preparation.',
+      'Our meals are cooked fresh on the day of delivery. We require 36 hours to source fresh ingredients and complete preparation.',
     category: 'ordering',
   },
   // About Our Tiffin Service
@@ -157,7 +157,7 @@ export const faqItems: FAQItem[] = [
     id: 'curry-club',
     question: 'How does the Curry Club work?',
     answer:
-      'Our Curry Club is a subscription model where members receive meals automatically each week. Free delivery for orders over $100.',
+      'Our Curry Club is designed for regular customers who love ordering from us every week — or even twice a week. Members can sign up for a Curry Club membership to enjoy savings on their favorite meals, along with exclusive perks like free delivery and priority ordering.',
     category: 'subscription',
   },
   {
