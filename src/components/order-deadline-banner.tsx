@@ -10,51 +10,51 @@ function getNextDeadline() {
   const hour = now.getHours();
 
   // Order deadlines:
-  // Sunday 12:00 PM for Monday delivery
-  // Wednesday 12:00 PM for Thursday delivery
+  // Sunday 10:00 AM for Monday delivery
+  // Wednesday 10:00 AM for Thursday delivery
 
   let nextDeadline: Date;
   let deliveryDay: string;
 
   if (day === 0) {
     // Sunday
-    if (hour < 12) {
-      // Before noon Sunday - deadline is today
+    if (hour < 10) {
+      // Before 10 AM Sunday - deadline is today
       nextDeadline = new Date(now);
-      nextDeadline.setHours(12, 0, 0, 0);
+      nextDeadline.setHours(10, 0, 0, 0);
       deliveryDay = 'Monday';
     } else {
-      // After noon Sunday - deadline is Wednesday for Thursday
+      // After 10 AM Sunday - deadline is Wednesday for Thursday
       nextDeadline = new Date(now);
       nextDeadline.setDate(now.getDate() + 3); // Wednesday
-      nextDeadline.setHours(12, 0, 0, 0);
+      nextDeadline.setHours(10, 0, 0, 0);
       deliveryDay = 'Thursday';
     }
   } else if (day === 1 || day === 2) {
     // Monday or Tuesday - deadline is Wednesday for Thursday
     nextDeadline = new Date(now);
     nextDeadline.setDate(now.getDate() + (3 - day)); // Wednesday
-    nextDeadline.setHours(12, 0, 0, 0);
+    nextDeadline.setHours(10, 0, 0, 0);
     deliveryDay = 'Thursday';
   } else if (day === 3) {
     // Wednesday
-    if (hour < 12) {
-      // Before noon Wednesday - deadline is today
+    if (hour < 10) {
+      // Before 10 AM Wednesday - deadline is today
       nextDeadline = new Date(now);
-      nextDeadline.setHours(12, 0, 0, 0);
+      nextDeadline.setHours(10, 0, 0, 0);
       deliveryDay = 'Thursday';
     } else {
-      // After noon Wednesday - deadline is Sunday for Monday
+      // After 10 AM Wednesday - deadline is Sunday for Monday
       nextDeadline = new Date(now);
       nextDeadline.setDate(now.getDate() + 4); // Sunday
-      nextDeadline.setHours(12, 0, 0, 0);
+      nextDeadline.setHours(10, 0, 0, 0);
       deliveryDay = 'Monday';
     }
   } else {
     // Thursday, Friday, Saturday - deadline is Sunday for Monday
     nextDeadline = new Date(now);
     nextDeadline.setDate(now.getDate() + (7 - day)); // Sunday
-    nextDeadline.setHours(12, 0, 0, 0);
+    nextDeadline.setHours(10, 0, 0, 0);
     deliveryDay = 'Monday';
   }
 
@@ -144,7 +144,7 @@ export function OrderDeadlineBanner() {
         <Clock className="h-4 w-4 flex-shrink-0" />
         <span>
           <strong>{deliveryDay} orders:</strong> Order by{' '}
-          {deliveryDay === 'Monday' ? 'Sunday' : 'Wednesday'} at 12:00 PM
+          {deliveryDay === 'Monday' ? 'Sunday' : 'Wednesday'} at 10:00 AM
           <span className="mx-2">|</span>
           <span className="text-gold font-medium">{timeRemaining}</span>
         </span>

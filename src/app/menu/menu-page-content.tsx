@@ -453,7 +453,7 @@ export function MenuPageContent({
           >
             <h1 className="mb-4 text-3xl font-bold">Tiffin Menu</h1>
             <p className="text-muted-foreground text-lg">
-              Fresh, home-style Indian meals prepared with love. Order by Sunday noon for Monday delivery, or Wednesday noon for Thursday delivery.
+              Fresh, home-style Indian meals prepared with love. Order by Sunday 10 AM for Monday delivery, or Wednesday 10 AM for Thursday delivery.
             </p>
           </motion.div>
         </div>

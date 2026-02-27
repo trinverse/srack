@@ -134,7 +134,7 @@ export const menuItems: MenuItem[] = [
 export const mondayMenu: WeeklyMenu = {
   day: 'monday',
   date: '2024-01-08',
-  orderDeadline: 'Saturday 6:00 PM',
+  orderDeadline: 'Sunday 10:00 AM',
   items: menuItems.filter((item) =>
     ['butter-chicken', 'palak-paneer', 'dal-tadka', 'jeera-rice', 'garlic-naan', 'raita', 'samosa', 'gulab-jamun'].includes(item.id)
   ),
@@ -143,7 +143,7 @@ export const mondayMenu: WeeklyMenu = {
 export const thursdayMenu: WeeklyMenu = {
   day: 'thursday',
   date: '2024-01-11',
-  orderDeadline: 'Tuesday 6:00 PM',
+  orderDeadline: 'Wednesday 10:00 AM',
   items: menuItems.filter((item) =>
     ['lamb-curry', 'chana-masala', 'vegetable-biryani', 'roti', 'raita', 'samosa', 'mango-lassi'].includes(item.id)
   ),

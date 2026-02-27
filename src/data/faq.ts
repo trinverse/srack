@@ -26,7 +26,7 @@ export const faqItems: FAQItem[] = [
     id: 'order-deadline',
     question: 'What is the order deadline?',
     answer:
-      'Orders must be placed at least 30 hours before the delivery day. For Monday deliveries, order by Sunday 6:00 PM. For Thursday deliveries, order by Wednesday 6:00 PM.',
+      'Orders must be placed at least 30 hours before the delivery day. For Monday deliveries, order by Sunday 10:00 AM. For Thursday deliveries, order by Wednesday 10:00 AM.',
     category: 'ordering',
   },
   {
