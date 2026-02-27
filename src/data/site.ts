@@ -32,7 +32,7 @@ export const contactInfo: ContactInfo = {
   email: 'spicerackatlanta@gmail.com',
   hours: [
     { days: 'Delivery Days', hours: 'Mon & Thu' },
-    { days: 'Order Deadline', hours: '36 hours in advance' },
+    { days: 'Order Deadline', hours: '30 hours in advance' },
   ],
   socialLinks: [
     { platform: 'facebook', url: 'https://facebook.com/thespicerackatlanta' },

@@ -122,7 +122,7 @@ export default function ContactPage() {
                         Mondays & Thursdays
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        Order 36 hours in advance
+                        Order 30 hours in advance
                       </p>
                     </div>
                   </CardContent>

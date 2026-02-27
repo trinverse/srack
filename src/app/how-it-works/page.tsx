@@ -55,7 +55,7 @@ const steps = [
           Choose 8oz (perfect for one) or 16oz (great for two).
         </p>
         <p>
-          <strong>$30 minimum order required.</strong> Please place your order 36 hours in advance.
+          <strong>$30 minimum order required.</strong> Please place your order 30 hours in advance.
         </p>
         <p className="flex items-center gap-2">
           <MessageCircle className="h-4 w-4 text-green-500 shrink-0" />

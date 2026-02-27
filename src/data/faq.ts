@@ -5,7 +5,7 @@ export const faqItems: FAQItem[] = [
     id: 'how-to-order',
     question: 'How do I place an order?',
     answer:
-      'You can place an order through our website. Simply browse our weekly menu, select your items, and checkout. Orders must be placed at least 36 hours before the delivery day.',
+      'You can place an order through our website. Simply browse our weekly menu, select your items, and checkout. Orders must be placed at least 30 hours before the delivery day.',
     category: 'ordering',
   },
   {
@@ -26,7 +26,7 @@ export const faqItems: FAQItem[] = [
     id: 'order-deadline',
     question: 'What is the order deadline?',
     answer:
-      'Orders must be placed at least 36 hours before the delivery day. For Monday deliveries, order by Sunday 12:00 PM. For Thursday deliveries, order by Wednesday 12:00 PM.',
+      'Orders must be placed at least 30 hours before the delivery day. For Monday deliveries, order by Sunday 6:00 PM. For Thursday deliveries, order by Wednesday 6:00 PM.',
     category: 'ordering',
   },
   {
@@ -88,9 +88,9 @@ export const faqItems: FAQItem[] = [
   },
   {
     id: 'advance-order',
-    question: 'Why do you require 36-hour advance orders?',
+    question: 'Why do you require 30-hour advance orders?',
     answer:
-      'Our meals are cooked fresh on the day of delivery. We require 36 hours to source fresh ingredients and complete preparation.',
+      'Our meals are cooked fresh on the day of delivery. We require 30 hours to source fresh ingredients and complete preparation.',
     category: 'ordering',
   },
   // About Our Tiffin Service
