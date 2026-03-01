@@ -99,8 +99,8 @@ export default function AboutPage() {
             >
               <div className="aspect-square rounded-2xl overflow-hidden relative">
                 <Image
-                  src="https://wwwkbbhvrmrjptxmalhp.supabase.co/storage/v1/object/public/menu-images/about/banner-2.jpg"
-                  alt="The Spice Rack Atlanta - Twice a week home delivery tiffin service, serving Metro Atlanta since 2014"
+                  src="https://wwwkbbhvrmrjptxmalhp.supabase.co/storage/v1/object/public/menu-images/about/banner-1.jpg"
+                  alt="The Spice Rack Atlanta - Home cooked food delivery"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
