@@ -464,7 +464,7 @@ export function SettingsManagement({
 
           <Card>
             <CardContent className="pt-6">
-              <div className="max-h-96 overflow-y-auto">
+              <div className="max-h-[calc(100vh-20rem)] overflow-y-auto">
                 <table className="w-full">
                   <thead className="sticky top-0 bg-white">
                     <tr className="border-b">

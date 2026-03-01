@@ -97,12 +97,13 @@ export default function AboutPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="relative"
             >
-              <div className="aspect-square rounded-2xl overflow-hidden relative">
+              <div className="rounded-2xl overflow-hidden relative bg-[#6abf40]">
                 <Image
                   src="https://wwwkbbhvrmrjptxmalhp.supabase.co/storage/v1/object/public/menu-images/about/banner-1.jpg"
                   alt="The Spice Rack Atlanta - Home cooked food delivery"
-                  fill
-                  className="object-cover"
+                  width={600}
+                  height={1000}
+                  className="w-full h-auto"
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority
                 />
