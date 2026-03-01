@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Heart, Leaf, Users, Award, ChefHat, Clock } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
@@ -96,12 +97,15 @@ export default function AboutPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="relative"
             >
-              <div className="aspect-square bg-gradient-to-br from-emerald/20 to-gold/20 rounded-2xl flex items-center justify-center">
-                <div className="text-center p-8">
-                  <ChefHat className="w-24 h-24 text-emerald mx-auto mb-4" />
-                  <p className="text-lg font-medium">Cooking with Tradition</p>
-                  <p className="text-muted-foreground">Since 2014</p>
-                </div>
+              <div className="aspect-square rounded-2xl overflow-hidden relative">
+                <Image
+                  src="https://wwwkbbhvrmrjptxmalhp.supabase.co/storage/v1/object/public/menu-images/about/banner-2.jpg"
+                  alt="The Spice Rack Atlanta - Twice a week home delivery tiffin service, serving Metro Atlanta since 2014"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
               </div>
             </motion.div>
           </div>
