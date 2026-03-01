@@ -13,7 +13,10 @@ import {
   Loader2,
   Calendar,
   Check,
+  Upload,
+  ImageIcon,
 } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/client';
@@ -76,6 +79,7 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
 
   // Form state for new/edit item
   const [formData, setFormData] = useState<Partial<MenuItem>>({});
+  const [isUploading, setIsUploading] = useState(false);
 
   const menuActive = settings.find(s => s.setting_key === 'menu_active')?.setting_value === 'true';
   const mondayActive = settings.find(s => s.setting_key === 'monday_menu_active')?.setting_value === 'true';
@@ -139,6 +143,7 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
       is_active: true,
       is_popular: false,
       sort_order: 0,
+      image_url: null,
     });
     setIsCreating(true);
   };
@@ -195,6 +200,41 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
     return weeklyMenus.some(
       wm => wm.menu_item_id === itemId && wm.order_day === day && wm.menu_date === targetDate
     );
+  };
+
+  const handleImageUpload = async (file: File) => {
+    setIsUploading(true);
+    setAdminError(null);
+
+    try {
+      // Generate a unique filename
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const filePath = `menu-images/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('menu-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+
+      if (uploadError) {
+        setAdminError(`Upload failed: ${uploadError.message}`);
+        return;
+      }
+
+      // Get the public URL
+      const { data: urlData } = supabase.storage
+        .from('menu-images')
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, image_url: urlData.publicUrl });
+    } catch (err) {
+      setAdminError(`Upload failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleSave = async () => {
@@ -406,10 +446,27 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
                 <div
                   key={item.id}
                   className={cn(
-                    'flex items-center justify-between p-4 border rounded-lg',
+                    'flex items-center gap-4 p-4 border rounded-lg',
                     !item.is_active && 'opacity-50 bg-muted/50'
                   )}
                 >
+                  {/* Image Thumbnail */}
+                  <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-muted/30 shrink-0">
+                    {item.image_url ? (
+                      <Image
+                        src={item.image_url}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                        sizes="56px"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/40">
+                        <ImageIcon className="h-6 w-6" />
+                      </div>
+                    )}
+                  </div>
+
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-medium">{item.name}</h3>
@@ -462,7 +519,7 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
                       </Button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -528,6 +585,83 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
                   rows={3}
                   required
                 />
+              </div>
+
+              {/* Image Upload / URL */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Image</label>
+                <div className="flex gap-4">
+                  {/* Preview */}
+                  <div className="relative w-28 h-28 rounded-lg overflow-hidden bg-muted/30 border shrink-0">
+                    {formData.image_url ? (
+                      <Image
+                        src={formData.image_url}
+                        alt={formData.name || 'Menu item'}
+                        fill
+                        className="object-cover"
+                        sizes="112px"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/40 gap-1">
+                        <ImageIcon className="h-8 w-8" />
+                        <span className="text-[10px]">No image</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 space-y-2">
+                    {/* File Upload */}
+                    <label className={cn(
+                      "flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+                      isUploading
+                        ? "border-muted bg-muted/30 cursor-wait"
+                        : "border-border hover:border-emerald/50 hover:bg-emerald/5"
+                    )}>
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="text-sm text-muted-foreground">Uploading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Upload image</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={isUploading}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleImageUpload(file);
+                          e.target.value = '';
+                        }}
+                      />
+                    </label>
+
+                    {/* URL Input */}
+                    <div className="relative">
+                      <input
+                        type="url"
+                        value={formData.image_url || ''}
+                        onChange={(e) => setFormData({ ...formData, image_url: e.target.value || null })}
+                        placeholder="Or paste image URL..."
+                        className="w-full px-3 py-2 border rounded-lg text-sm"
+                      />
+                      {formData.image_url && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, image_url: null })}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-destructive"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

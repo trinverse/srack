@@ -29,28 +29,20 @@ interface MenuPageContentProps {
   weeklyMenus: WeeklyMenu[];
 }
 
-const categoryLabels: Record<MenuCategory, string> = {
+const categoryLabels: Partial<Record<MenuCategory, string>> = {
   veg_entrees: 'Veg Entrees',
   non_veg_entrees: 'Non-Veg Entrees',
   dal_entrees: 'Dal Entrees',
   roties_rice: 'Roties & Rice',
   special_items: 'Special Items',
-  breakfast: 'Breakfast',
-  dessert: 'Dessert',
-  chutneys: 'Chutneys',
-  sides: 'Sides',
 };
 
 const categoryOrder: MenuCategory[] = [
-  'special_items',
   'veg_entrees',
   'non_veg_entrees',
   'dal_entrees',
   'roties_rice',
-  'breakfast',
-  'dessert',
-  'chutneys',
-  'sides',
+  'special_items',
 ];
 
 const spiceLevelColors = {
@@ -548,9 +540,9 @@ export function MenuPageContent({
       {/* Category Filter and Search */}
       <section className="py-2 border-b sticky top-16 bg-background/95 backdrop-blur-md z-40 shadow-sm transition-all">
         <div className="container-wide">
-          <div className="flex flex-col lg:flex-row gap-3 items-center justify-between">
+          <div className="flex flex-col gap-3 items-center">
             {/* Categories */}
-            <div className="flex gap-1.5 overflow-x-auto pb-0 scrollbar-hide w-full lg:w-auto">
+            <div className="flex gap-1.5 overflow-x-auto pb-0 scrollbar-hide justify-center w-full">
               <button
                 onClick={() => setActiveCategory('all')}
                 className={cn(
