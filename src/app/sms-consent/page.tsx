@@ -62,10 +62,10 @@ export default function SmsConsentPage() {
             <p>
               If you need assistance, reply <strong>HELP</strong> to any message or contact us at{' '}
               <a
-                href="mailto:hello@thespicerackatlanta.com"
+                href="mailto:thespicerackatlanta@gmail.com"
                 className="text-emerald hover:underline"
               >
-                hello@thespicerackatlanta.com
+                thespicerackatlanta@gmail.com
               </a>
               .
             </p>
@@ -105,10 +105,10 @@ export default function SmsConsentPage() {
               The Spice Rack Atlanta
               <br />
               <a
-                href="mailto:hello@thespicerackatlanta.com"
+                href="mailto:thespicerackatlanta@gmail.com"
                 className="text-emerald hover:underline"
               >
-                hello@thespicerackatlanta.com
+                thespicerackatlanta@gmail.com
               </a>
             </p>
           </section>

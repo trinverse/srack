@@ -7,7 +7,7 @@
  *
  * Environment variables required:
  *   - RESEND_API_KEY          — Resend API key
- *   - FROM_EMAIL              — Sender email address (default: orders@thespicerackatlanta.com)
+ *   - FROM_EMAIL              — Sender email address (default: thespicerackatlanta@gmail.com)
  *   - TWILIO_ACCOUNT_SID      — Twilio Account SID
  *   - TWILIO_AUTH_TOKEN        — Twilio Auth Token
  *   - TWILIO_PHONE_NUMBER      — Twilio sender phone number (E.164 format)

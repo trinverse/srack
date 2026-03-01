@@ -164,7 +164,7 @@ export const faqItems: FAQItem[] = [
     id: 'pause-subscription',
     question: 'Can I pause my subscription?',
     answer:
-      'Yes, you can pause your plan for one week through \u201CMy Account.\u201D To extend the pause, contact us at spicerackatlanta@gmail.com or call (910) 703-5199.',
+      'Yes, you can pause your plan for one week through \u201CMy Account.\u201D To extend the pause, contact us at thespicerackatlanta@gmail.com or call (910) 703-5199.',
     category: 'subscription',
   },
   {

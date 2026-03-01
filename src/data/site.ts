@@ -29,7 +29,7 @@ export const navigation: NavItem[] = [
 
 export const contactInfo: ContactInfo = {
   phone: '(910) 703-5199',
-  email: 'spicerackatlanta@gmail.com',
+  email: 'thespicerackatlanta@gmail.com',
   hours: [
     { days: 'Delivery Days', hours: 'Mon & Thu' },
     { days: 'Order Deadline', hours: '30 hours in advance' },

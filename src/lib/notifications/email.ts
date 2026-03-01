@@ -5,7 +5,7 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'The Spice Rack Atlanta <orders@thespicerackatlanta.com>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'The Spice Rack Atlanta <thespicerackatlanta@gmail.com>';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://thespicerackatlanta.com';
 
 export interface EmailPayload {
@@ -31,7 +31,7 @@ export async function sendEmail(payload: EmailPayload): Promise<{ success: boole
       to: payload.to,
       subject: payload.subject,
       html: payload.html,
-      replyTo: payload.replyTo || 'hello@thespicerackatlanta.com',
+      replyTo: payload.replyTo || 'thespicerackatlanta@gmail.com',
     });
 
     if (error) {
@@ -79,7 +79,7 @@ function baseLayout(content: string): string {
       <p style="margin:0 0 8px;color:#6b7280;font-size:13px;">
         <a href="${SITE_URL}" style="color:#0A7B5C;text-decoration:none;">Visit our website</a>
         &nbsp;&middot;&nbsp;
-        <a href="mailto:hello@thespicerackatlanta.com" style="color:#0A7B5C;text-decoration:none;">Contact us</a>
+        <a href="mailto:thespicerackatlanta@gmail.com" style="color:#0A7B5C;text-decoration:none;">Contact us</a>
       </p>
       <p style="margin:0;color:#9ca3af;font-size:11px;">
         You received this email because you placed an order with The Spice Rack Atlanta.
@@ -292,7 +292,7 @@ export function buildOrderStatusEmail(data: OrderStatusUpdateData): { subject: s
     data.newStatus === 'canceled'
       ? `<div style="margin-top:20px;padding:16px;background-color:#fafafa;border-radius:8px;">
           <p style="margin:0;color:#6b7280;font-size:14px;">
-            Need help? Reach us at <a href="mailto:hello@thespicerackatlanta.com" style="color:#0A7B5C;">hello@thespicerackatlanta.com</a>
+            Need help? Reach us at <a href="mailto:thespicerackatlanta@gmail.com" style="color:#0A7B5C;">thespicerackatlanta@gmail.com</a>
             or call <a href="tel:4045550123" style="color:#0A7B5C;">(404) 555-0123</a>.
           </p>
         </div>`
