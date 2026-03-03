@@ -29,10 +29,15 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Refresh session if expired
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Do not run code between createServerClient and supabase.auth.getClaims().
+  // A simple mistake could make it very hard to debug issues with users being
+  // randomly logged out.
+
+  // IMPORTANT: getClaims() validates the JWT locally (signature + expiry) and
+  // refreshes the token if needed. Using getUser() here causes a network call
+  // that can fail/timeout and break session cookie refresh.
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims;
 
   // Protected routes
   const protectedPaths = ['/account', '/checkout', '/orders', '/admin'];
@@ -56,7 +61,7 @@ export async function updateSession(request: NextRequest) {
     const { data: customer } = await supabase
       .from('customers')
       .select('role')
-      .eq('auth_user_id', user.id)
+      .eq('auth_user_id', user.sub)
       .single();
 
     if (!customer || !['admin', 'kitchen', 'marketing'].includes(customer.role)) {
