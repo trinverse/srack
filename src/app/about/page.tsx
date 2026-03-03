@@ -101,8 +101,8 @@ export default function AboutPage() {
                 <Image
                   src="https://wwwkbbhvrmrjptxmalhp.supabase.co/storage/v1/object/public/menu-images/about/banner-1.jpg"
                   alt="The Spice Rack Atlanta - Home cooked food delivery"
-                  width={600}
-                  height={1000}
+                  width={564}
+                  height={1002}
                   className="w-full h-auto"
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority
