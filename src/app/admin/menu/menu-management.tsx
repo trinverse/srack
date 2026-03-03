@@ -210,7 +210,7 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
       // Generate a unique filename
       const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
       const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const filePath = `menu-images/${fileName}`;
+      const filePath = fileName;
 
       const { error: uploadError } = await supabase.storage
         .from('menu-images')
@@ -565,6 +565,12 @@ export function MenuManagement({ initialMenuItems, initialSettings, initialWeekl
               </Button>
             </CardHeader>
             <CardContent className="space-y-4">
+              {adminError && (
+                <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm flex items-center justify-between">
+                  <span>⚠️ {adminError}</span>
+                  <button onClick={() => setAdminError(null)} className="ml-4 font-bold hover:underline">✕</button>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium mb-1">Name *</label>
                 <input
